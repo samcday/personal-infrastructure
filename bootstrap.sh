@@ -130,5 +130,6 @@ if ! kubectl --context=personal-admin@personal -n kube-system get deploy/cilium-
 fi
 
 flux install --context=personal-admin@personal --toleration-keys=node-role.kubernetes.io/master
+flux create source git personal-infrastructure --url https://github.com/samcday/personal-infrastructure.git --branch main
 
 kubectl --context=personal-admin@personal get nodes

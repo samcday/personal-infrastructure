@@ -10,6 +10,6 @@ An extremely sophisticated Web Scale task runner (Bash) is used to:
  * Install Docker + kubeadm on each machine
  * Initialize a cluster with `kubeadm init` if one does not yet exist
  * Connect all servers to the cluster with `kubeadm join`
- * Installs [Cilium](https://cilium.io/) and [Flux2](https://fluxcd.io)
+ * Install [Cilium](https://cilium.io/) and [Flux2](https://fluxcd.io)
 
 Everything else is handled in Kubernetes from then on.
