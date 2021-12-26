@@ -1,11 +1,15 @@
 #!/bin/bash
 set -ueo pipefail
 
-server_type=cpx21
+server_type=cx21
 image=ubuntu-20.04
 location=fsn1
 ssh_key=mine
 loadbalancer_type=lb11
+network_cidr=10.96.0.0/14
+pod_cidr=10.98.0.0/15
+service_cidr=10.97.0.0/16
+kube_version=1.21.8
 
 [[ -f .env ]] && source .env
 
@@ -34,22 +38,78 @@ function setup_loadbalancer() {
   done
 }
 
+function setup_network() {
+  if ! hcloud network describe cluster >/dev/null 2>&1; then
+    hcloud network create --ip-range $network_cidr --name cluster
+  fi
+  if [[ -z "$(hcloud network describe cluster -o json | jq ".subnets | map(select(.ip_range == \"$network_cidr\")) | .[]")" ]]; then
+    hcloud network add-subnet cluster --ip-range $network_cidr --network-zone eu-central --type cloud
+  fi
+}
+
+function attach_lb_to_network() {
+  network_id=$(hcloud network describe cluster -o json | jq .id)
+
+  if [[ -z "$(hcloud load-balancer describe cluster -o json | jq ".private_net | map(select(.network == $network_id)) | .[]")" ]]; then
+    hcloud load-balancer attach-to-network cluster --network cluster
+  fi
+}
+
+function setup_firewall() {
+  if ! hcloud firewall describe cluster >/dev/null 2>&1; then
+    hcloud firewall create --name cluster --rules-file - <<RULES
+[
+  {
+    "description": "SSH",
+    "destination_ips": [],
+    "direction": "in",
+    "port": "22",
+    "protocol": "tcp",
+    "source_ips": [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  },
+  {
+    "description": "Wireguard",
+    "destination_ips": [],
+    "direction": "in",
+    "port": "51871",
+    "protocol": "udp",
+    "source_ips": [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+]
+RULES
+  fi
+}
+
 function setup_control_node() {
   if ! hcloud server describe "$1" >/dev/null 2>&1; then
-    hcloud server create --name "$1" --type $server_type --placement-group cluster --ssh-key $ssh_key --image $image --location $location
+    hcloud server create \
+      --name "$1" \
+      --type $server_type \
+      --placement-group cluster \
+      --ssh-key $ssh_key \
+      --image $image \
+      --location $location \
+      --firewall cluster \
+      --network cluster
     ssh-keygen -R "$(hcloud server ip "$1")"
   fi
 
   server_id=$(hcloud server describe "$1" -o "format={{.ID}}")
 
   if [[ -z "$(hcloud load-balancer describe cluster -o json | jq ".targets | map(select(.server.id == $server_id)) | .[]")" ]]; then
-    hcloud load-balancer add-target cluster --server "$1"
+    hcloud load-balancer add-target cluster --server "$1" --use-private-ip
   fi
 
   server_ip=$(hcloud server ip "$1")
   until ssh -o StrictHostKeyChecking=accept-new root@"$server_ip" echo hi mom >/dev/null 2>&1; do sleep 1; done
 
-  result=$(ssh -T root@"$server_ip" <<-"INIT"
+  ssh -T root@"$server_ip" kube_version=$kube_version bash <<-"INIT"
     set -ueo pipefail
     export DEBIAN_FRONTEND=noninteractive
 
@@ -69,20 +129,23 @@ function setup_control_node() {
       curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
       echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
       apt-get update
-      apt-get install -y kubelet kubeadm kubectl
+      apt-get install -y kubelet=$kube_version-00 kubeadm=$kube_version-00 kubectl=$kube_version-00
       apt-mark hold kubelet kubeadm kubectl
     fi
 INIT
-)
 }
-
-loadbalancer_ip=$(hcloud load-balancer describe cluster -o json | jq -r .public_net.ipv4.ip)
 
 setup_placement_group &
 setup_loadbalancer &
+setup_network &
+setup_firewall &
 
 # shellcheck disable=SC2046
 wait $(jobs -p)
+
+attach_lb_to_network
+
+loadbalancer_ip=$(hcloud load-balancer describe cluster -o json | jq -r .public_net.ipv4.ip)
 
 for name in cluster{1..3}; do
   setup_control_node "$name" &
@@ -99,8 +162,27 @@ for name in cluster{1..3}; do
 done
 
 if [[ -z "$cluster_master" ]]; then
-  CP_ENDPOINT=$loadbalancer_ip envsubst < kubeadm.yml | hcloud server ssh cluster1 \
-    'cat > kubeadm.yml && kubeadm init --config kubeadm.yml --skip-token-print'
+  private_ip=$(hcloud server describe cluster1 -o json | jq -r '.private_net[0].ip')
+  cat > /tmp/kubeadm <<KUBEADM
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+clusterName: personal
+controlPlaneEndpoint: $loadbalancer_ip
+networking:
+  serviceSubnet: $service_cidr
+  podSubnet: $pod_cidr
+kubernetesVersion: $kube_version
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: $private_ip
+nodeRegistration:
+  kubeletExtraArgs:
+    node-ip: $private_ip
+KUBEADM
+
+  hcloud server ssh cluster1 "kubeadm init --config /dev/stdin" </tmp/kubeadm
   cluster_master=cluster1
 fi
 
@@ -131,14 +213,25 @@ CERTS
 )
 
 for name in cluster{1..3}; do
-  hcloud server ssh $name -T <<-JOIN
-    set -ueo pipefail
-    if [[ -f /etc/kubernetes/kubelet.conf ]]; then
-      exit 0
-    fi
+  private_ip=$(hcloud server describe $name -o json | jq -r '.private_net[0].ip')
+  cat > /tmp/kubeadm <<KUBEADM
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: JoinConfiguration
+controlPlane:
+  localAPIEndpoint:
+    advertiseAddress: $private_ip
+  certificateKey: $cert_key
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: $loadbalancer_ip:6443
+    token: $join_token
+    caCertHashes: [$discovery_token_hash]
+nodeRegistration:
+  kubeletExtraArgs:
+    node-ip: $private_ip
+KUBEADM
 
-    kubeadm join "$loadbalancer_ip":6443 --control-plane --certificate-key $cert_key --discovery-token-ca-cert-hash=$discovery_token_hash --token $join_token
-JOIN
+  hcloud server ssh $name "if [[ ! -f /etc/kubernetes/kubelet.conf ]]; then kubeadm join --config /dev/stdin; fi" < /tmp/kubeadm
 done
 
 if ! kubectl --context=personal-admin@personal -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
