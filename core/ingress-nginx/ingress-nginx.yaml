@@ -1,0 +1,74 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: ingress-nginx
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  url: https://kubernetes.github.io/ingress-nginx
+
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: ingress-nginx
+  namespace: flux-system
+spec:
+  targetNamespace: ingress-nginx
+  timeout: 1m
+  install:
+    createNamespace: true
+  chart:
+    spec:
+      chart: ingress-nginx
+      sourceRef:
+        kind: HelmRepository
+        name: ingress-nginx
+      version: 4.0.13
+  interval: 1m0s
+  releaseName: ingress-nginx
+  values:
+    controller:
+      kind: DaemonSet
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      service:
+        type: NodePort
+        nodePorts:
+          http: 32080
+          https: 32443
+        externalTrafficPolicy: Local
+
+# - https://github.com/kubernetes/ingress-nginx/deploy/static/provider/cloud?ref=controller-v1.1.0
+# patches:
+# - target:
+#     group: apps
+#     version: v1
+#     kind: Deployment
+#     name: ingress-nginx-controller
+#   patch: |-
+#     - op: replace
+#       path: /spec/template/spec/nodeSelector
+#       value:
+#         node-role.kubernetes.io/master: ""
+#     - op: replace
+#       path: /spec/template/spec/tolerations
+#       value:
+# - target:
+#     version: v1
+#     kind: Service
+#     name: ingress-nginx-controller
+#   patch: |-
+#     - op: replace
+#       path: /spec/type
+#       value: NodePort
+#     - op: replace
+#       path: /spec/ports/0/nodePort
+#       value: 30080
+#     - op: replace
+#       path: /spec/ports/1/nodePort
+#       value: 30443

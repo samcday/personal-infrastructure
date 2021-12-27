@@ -4,4 +4,5 @@ resources:
 - core/cert-manager
 - core/cluster-autoscaler
 - core/hcloud-csi-driver
+- core/ingress-nginx
 - core/metrics-server
