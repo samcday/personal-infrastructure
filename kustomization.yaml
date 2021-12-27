@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
 - core/cert-manager
 - core/cluster-autoscaler
+- core/hcloud-csi-driver
 - core/metrics-server
