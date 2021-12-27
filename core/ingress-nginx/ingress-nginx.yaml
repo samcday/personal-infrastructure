@@ -31,6 +31,8 @@ spec:
   values:
     controller:
       kind: DaemonSet
+      config:
+        use-proxy-protocol: true
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists

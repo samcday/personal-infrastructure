@@ -31,11 +31,13 @@ function setup_loadbalancer() {
     hcloud load-balancer create --algorithm-type round_robin --location $location --name cluster --type $loadbalancer_type
   fi
 
-  for port in 80:32080 443:32443 6443:6443; do
+  for port in 80:32080:--proxy-protocol 443:32443:--proxy-protocol 6443:6443:; do
     listen_port=$(echo $port | cut -d':' -f1)
     dest_port=$(echo $port | cut -d':' -f2)
+    flags=$(echo $port | cut -d':' -f3)
+
     if [[ -z "$(hcloud load-balancer describe cluster -o json | jq ".services | map(select(.listen_port == $listen_port)) | .[]")" ]]; then
-      hcloud load-balancer add-service cluster --destination-port "$dest_port" --listen-port "$listen_port" --protocol tcp
+      hcloud load-balancer add-service cluster --destination-port "$dest_port" --listen-port "$listen_port" --protocol tcp "$flags"
     fi
   done
 }
