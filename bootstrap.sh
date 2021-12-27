@@ -234,18 +234,26 @@ KUBEADM
   hcloud server ssh $name "if [[ ! -f /etc/kubernetes/kubelet.conf ]]; then kubeadm join --config /dev/stdin; fi" < /tmp/kubeadm
 done
 
-if ! kubectl --context=personal-admin@personal -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
-  cilium install --context=personal-admin@personal --encryption=wireguard
+kube_ctx="--context=personal-admin@personal"
+
+if ! kubectl $kube_ctx -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
+  cilium install $kube_ctx --encryption=wireguard
 fi
 
-flux install --context=personal-admin@personal --toleration-keys=node-role.kubernetes.io/master
+kubectl $kube_ctx -n kube-system create secret generic hcloud --from-literal=HCLOUD_TOKEN=$HCLOUD_TOKEN -o yaml --dry-run=client \
+  | kubectl $kube_ctx apply -f-
+
+kubectl $kube_ctx -n kube-system create secret generic discovery-token-hash --from-literal=hash="$discovery_token_hash" -o yaml --dry-run=client \
+  | kubectl $kube_ctx apply -f-
+
+flux install $kube_ctx --toleration-keys=node-role.kubernetes.io/master
 flux create source git personal-infrastructure \
-  --context=personal-admin@personal \
+  $kube_ctx \
   --url https://github.com/samcday/personal-infrastructure.git \
   --branch main
 flux create kustomization personal-infrastructure \
-  --context=personal-admin@personal \
+  $kube_ctx \
   --source personal-infrastructure \
   --path .
 
-kubectl --context=personal-admin@personal get nodes
+kubectl $kube_ctx get nodes

@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- cluster-autoscaler.yaml
+- cloud-init-generator.yml
+
+configMapGenerator:
+- name: cloud-init-generator-script
+  namespace: kube-system
+  files: [cloud-init-generator/update-cloud-init.sh]
