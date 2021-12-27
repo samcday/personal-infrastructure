@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ueo pipefail
+set -uexo pipefail
 
 server_type=cx21
 image=ubuntu-20.04
@@ -248,6 +248,9 @@ kubectl $kube_ctx -n kube-system create secret generic hcloud --from-literal=HCL
   | kubectl $kube_ctx apply -f-
 
 kubectl $kube_ctx -n kube-system create secret generic discovery-token-hash --from-literal=hash="$discovery_token_hash" -o yaml --dry-run=client \
+  | kubectl $kube_ctx apply -f-
+
+kubectl $kube_ctx -n kube-system create secret generic age-key --from-file=age-key.txt=<(age -d -i ~/.ssh/id_ed25519 < age-key.txt) -o yaml --dry-run=client \
   | kubectl $kube_ctx apply -f-
 
 flux install $kube_ctx --toleration-keys=node-role.kubernetes.io/master

@@ -6,3 +6,4 @@ resources:
 - core/hcloud-csi-driver
 - core/ingress-nginx
 - core/metrics-server
+- core/sops-secrets-operator
