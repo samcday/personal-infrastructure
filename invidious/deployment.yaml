@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: invidious
+  name: invidious
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: invidious
+  template:
+    metadata:
+      labels:
+        app: invidious
+    spec:
+      enableServiceLinks: false
+      containers:
+      - image: quay.io/invidious/invidious
+        name: invidious
+        env:
+        - name: INVIDIOUS_CONFIG_FILE
+          value: /config/config.yaml
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: config
+          mountPath: /config
+      initContainers:
+      - name: config
+        image: alpine:3.15.0
+        command:
+        - sh
+        - -c
+        - |-
+          apk add gettext
+          envsubst < /config-template/config.yaml > /config/config.yaml
+        env:
+        - name: PG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: password
+        volumeMounts:
+        - name: config-template
+          mountPath: /config-template
+        - name: config
+          mountPath: /config
+      volumes:
+      - name: config-template
+        configMap:
+          name: config
+      - name: config
+        emptyDir: {}
