@@ -5,7 +5,7 @@ resources:
 - namespace.yaml
 - certificate.yaml
 - postgres.yaml
-- postgres-secret.yaml
+- secrets.yaml
 - deployment.yaml
 - ingress.yaml
 - service.yaml

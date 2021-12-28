@@ -41,6 +41,16 @@ spec:
             secretKeyRef:
               name: postgres
               key: password
+        - name: CAPTCHA_KEY
+          valueFrom:
+            secretKeyRef:
+              name: invidious
+              key: anticaptcha
+        - name: HMAC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: invidious
+              key: hmac
         volumeMounts:
         - name: config-template
           mountPath: /config-template
