@@ -109,61 +109,10 @@ hsts: true
 popular_enabled: false
 statistics_enabled: true
 
-
-# -----------------------------
-#  Users and accounts
-# -----------------------------
-
-##
-## Allow/Forbid Invidious (local) account creation. Invidious
-## accounts allow users to subscribe to channels and to create
-## playlists without a Google account.
-##
-## Accepted values: true, false
-## Default: true
-##
-#registration_enabled: true
-
-##
-## Allow/Forbid users to log-in. This setting affects the ability
-## to connect with BOTH Google and Invidious (local) accounts.
-##
-## Accepted values: true, false
-## Default: true
-##
-#login_enabled: true
-
-##
-## Enable/Disable the captcha challenge on the login page.
-##
-## Note: this is a basic captcha challenge that doesn't
-## depend on any third parties.
-##
-## Accepted values: true, false
-## Default: true
-##
-#captcha_enabled: true
-
-##
-## List of usernames that will be granted administrator rights.
-## A user with administrator rights will be able to change the
-## server configuration options listed below in /preferences,
-## in addition to the usual user preferences.
-##
-## Server-wide settings:
-##   - popular_enabled
-##   - captcha_enabled
-##   - login_enabled
-##   - registration_enabled
-##   - statistics_enabled
-## Default user preferences:
-##   - default_home
-##   - feed_menu
-##
-## Accepted values: an array of strings
-## Default: [""]
-##
-#admins: [""]
+registration_enabled: true
+login_enabled: true
+captcha_enabled: true
+admins: [samcday]
 
 
 # -----------------------------
