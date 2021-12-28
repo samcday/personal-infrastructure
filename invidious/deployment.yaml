@@ -16,11 +16,17 @@ spec:
     spec:
       enableServiceLinks: false
       containers:
-      - image: quay.io/invidious/invidious
+      - image: quay.io/invidious/invidious:fc2b9031d4850e7ed8eb24e388aeae38b4eb2762
         name: invidious
         env:
         - name: INVIDIOUS_CONFIG_FILE
           value: /config/config.yaml
+        livenessProbe:
+          httpGet:
+            path: /api/v1/stats
+            port: 3000
+          initialDelaySeconds: 3
+          periodSeconds: 3
         ports:
         - containerPort: 3000
         volumeMounts:
