@@ -1,9 +1,9 @@
 db:
   user: kemal
   password: ${PG_PASSWORD}
-  host: postgres
+  host: invidious-db
   port: 5432
-  dbname: kemal
+  dbname: invidious
 
 check_tables: true
 

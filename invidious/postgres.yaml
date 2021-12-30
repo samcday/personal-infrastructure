@@ -1,60 +1,16 @@
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: acid.zalan.do/v1
+kind: postgresql
 metadata:
-  labels:
-    app: postgres
-  name: postgres
+  name: invidious-db
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-  serviceName: postgres
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      containers:
-      - image: postgres:10.19-alpine
-        name: postgres
-        env:
-        - name: POSTGRES_USER
-          value: kemal
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres
-              key: password
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: pgdata
-  volumeClaimTemplates:
-  - metadata:
-      name: pgdata
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 10Gi
-      storageClassName: hcloud-volumes
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: postgres
-  name: postgres
-  namespace: invidious
-spec:
-  ports:
-  - port: 5432
-    protocol: TCP
-    targetPort: 5432
-  selector:
-    app: postgres
+  teamId: invidious
+  volume:
+    size: 10Gi
+  numberOfInstances: 1
+  users:
+    kemal: []
+  databases:
+    invidious: kemal
+  postgresql:
+    version: "10"
+  enableLogicalBackup: false
