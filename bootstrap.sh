@@ -184,6 +184,7 @@ localAPIEndpoint:
 nodeRegistration:
   kubeletExtraArgs:
     node-ip: $private_ip
+    cloud-provider: external
 KUBEADM
 
   hcloud server ssh cluster1 "kubeadm init --config /dev/stdin" </tmp/kubeadm
@@ -200,7 +201,7 @@ fi
 
 discovery_token_hash=sha256:$(hcloud server ssh $cluster_master -T "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
 join_token=$(hcloud server ssh $cluster_master -T <<"TOKEN"
-  token=$(kubeadm token list | grep authentication | cut -d' ' -f1)
+  token=$(kubeadm token list | grep authentication | cut -d' ' -f1 | tail -n1)
   if [[ -z "$token" ]]; then
     token=$(kubeadm token generate)
   fi
@@ -233,34 +234,44 @@ discovery:
 nodeRegistration:
   kubeletExtraArgs:
     node-ip: $private_ip
+    cloud-provider: external
 KUBEADM
 
   hcloud server ssh $name "if [[ ! -f /etc/kubernetes/kubelet.conf ]]; then kubeadm join --config /dev/stdin; fi" < /tmp/kubeadm
 done
 
 kube_ctx="--context=personal-admin@personal"
+kubectl="kubectl $kube_ctx"
 
-if ! kubectl $kube_ctx -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
+if ! $kubectl -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
   cilium install $kube_ctx --encryption=wireguard
 fi
 
-kubectl $kube_ctx -n kube-system create secret generic hcloud --from-literal=HCLOUD_TOKEN=$HCLOUD_TOKEN -o yaml --dry-run=client \
-  | kubectl $kube_ctx apply -f-
+$kubectl -n kube-system create secret generic hcloud --from-literal=HCLOUD_TOKEN=$HCLOUD_TOKEN -o yaml --dry-run=client \
+  | $kubectl apply -f-
 
-kubectl $kube_ctx -n kube-system create secret generic discovery-token-hash --from-literal=hash="$discovery_token_hash" -o yaml --dry-run=client \
-  | kubectl $kube_ctx apply -f-
+$kubectl -n kube-system create secret generic discovery-token-hash --from-literal=hash="$discovery_token_hash" -o yaml --dry-run=client \
+  | $kubectl apply -f-
 
-kubectl $kube_ctx -n kube-system create secret generic age-key --from-file=age-key.txt=<(age -d -i ~/.ssh/id_ed25519 < age-key.txt) -o yaml --dry-run=client \
-  | kubectl $kube_ctx apply -f-
+$kubectl -n kube-system create secret generic age-key --from-file=age-key.txt=<(age -d -i ~/.ssh/id_ed25519 < age-key.txt) -o yaml --dry-run=client \
+  | $kubectl apply -f-
 
-flux install $kube_ctx --toleration-keys=node-role.kubernetes.io/master
-flux create source git personal-infrastructure \
-  $kube_ctx \
-  --url https://github.com/samcday/personal-infrastructure.git \
-  --branch main
-flux create kustomization personal-infrastructure \
-  $kube_ctx \
-  --source personal-infrastructure \
-  --path .
+if ! $kubectl -n flux-system get namespace flux-system >/dev/null 2>&1; then
+  flux install $kube_ctx --toleration-keys=node-role.kubernetes.io/master
+fi
 
-kubectl $kube_ctx get nodes
+if ! $kubectl -n flux-system get gitrepo personal-infrastructure >/dev/null 2>&1; then
+  flux create source git personal-infrastructure \
+    $kube_ctx \
+    --url https://github.com/samcday/personal-infrastructure.git \
+    --branch main
+fi
+
+if ! $kubectl -n flux-system get kustomization personal-infrastructure >/dev/null 2>&1; then
+  flux create kustomization personal-infrastructure \
+    $kube_ctx \
+    --source personal-infrastructure \
+    --path .
+fi
+
+$kubectl get nodes
