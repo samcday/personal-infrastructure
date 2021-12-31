@@ -26,3 +26,4 @@ trusted_key_servers:
 suppress_key_server_warning: true
 media_store_path: /media
 serve_server_wellknown: true
+registration_shared_secret: ${REGISTRATION_SECRET}

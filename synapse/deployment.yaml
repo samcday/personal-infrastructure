@@ -38,6 +38,7 @@ spec:
         - sh
         - -c
         - |-
+          chown -R 991:991 /media
           apk add gettext
           cp /config-template/log.yaml /config/log.yaml
           envsubst < /config-template/homeserver.yaml > /config/homeserver.yaml
@@ -52,11 +53,18 @@ spec:
             secretKeyRef:
               name: synapse
               key: MACROON_SECRET_KEY
+        - name: REGISTRATION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: synapse
+              key: REGISTRATION_SECRET
         volumeMounts:
         - name: config-template
           mountPath: /config-template
         - name: config
           mountPath: /config
+        - name: media
+          mountPath: /media
       volumes:
       - name: config-template
         configMap:
