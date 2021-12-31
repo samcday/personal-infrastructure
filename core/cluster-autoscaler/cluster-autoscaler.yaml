@@ -148,7 +148,7 @@ spec:
         command:
           - ./cluster-autoscaler
           - --cloud-provider=hetzner
-          - --nodes=1:10:cpx31:FSN1:pool
+          - --nodes=1:10:cx21:fsn1:pool
         env:
         - name: HCLOUD_TOKEN
           valueFrom:
