@@ -10,3 +10,4 @@ resources:
 - core/sops-secrets-operator
 
 - invidious
+- synapse
