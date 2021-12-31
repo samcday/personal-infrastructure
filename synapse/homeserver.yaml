@@ -1,0 +1,28 @@
+server_name: matrix.samcday.com
+listeners:
+- port: 8008
+  tls: false
+  type: http
+  x_forwarded: true
+  resources:
+  - names: [client, federation]
+    compress: false
+database:
+  name: psycopg2
+  args:
+    user: synapse_user
+    password: ${PGPASS}
+    database: synapse
+    host: synapse-db
+    cp_min: 5
+    cp_max: 10
+log_config: /config/log.yaml
+report_stats: true
+macaroon_secret_key: ${MACROON_SECRET_KEY}
+signing_key_path: /signing-key/signing.key
+old_signing_keys:
+trusted_key_servers:
+- server_name: matrix.org
+suppress_key_server_warning: true
+media_store_path: /media
+serve_server_wellknown: true
