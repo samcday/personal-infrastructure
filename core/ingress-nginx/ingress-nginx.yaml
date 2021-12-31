@@ -43,34 +43,5 @@ spec:
         nodePorts:
           http: 32080
           https: 32443
+        externalIPs: [49.12.17.240] # Could be nice to pull this dynamically from a CM set by bootstrap.sh, or something. 
         externalTrafficPolicy: Local
-
-# - https://github.com/kubernetes/ingress-nginx/deploy/static/provider/cloud?ref=controller-v1.1.0
-# patches:
-# - target:
-#     group: apps
-#     version: v1
-#     kind: Deployment
-#     name: ingress-nginx-controller
-#   patch: |-
-#     - op: replace
-#       path: /spec/template/spec/nodeSelector
-#       value:
-#         node-role.kubernetes.io/master: ""
-#     - op: replace
-#       path: /spec/template/spec/tolerations
-#       value:
-# - target:
-#     version: v1
-#     kind: Service
-#     name: ingress-nginx-controller
-#   patch: |-
-#     - op: replace
-#       path: /spec/type
-#       value: NodePort
-#     - op: replace
-#       path: /spec/ports/0/nodePort
-#       value: 30080
-#     - op: replace
-#       path: /spec/ports/1/nodePort
-#       value: 30443

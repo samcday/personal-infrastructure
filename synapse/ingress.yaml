@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: synapse
   namespace: synapse
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: matrix.samcday.com
 spec:
   ingressClassName: nginx
   rules:

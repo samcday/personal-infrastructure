@@ -4,7 +4,8 @@ metadata:
   name: invidious
   namespace: invidious
   annotations:
-    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity: cookie
+    external-dns.alpha.kubernetes.io/hostname: invidious.samcday.com
 spec:
   ingressClassName: nginx
   rules:
