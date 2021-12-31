@@ -61,6 +61,7 @@ discovery:
 nodeRegistration:
   kubeletExtraArgs:
     node-ip: \$private_ip
+    cloud-provider: external
 KUBEADM
 kubeadm join --config kubeadm.yml
 INIT
