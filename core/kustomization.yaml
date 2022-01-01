@@ -8,5 +8,6 @@ resources:
 - ingress-nginx/
 - kube-prometheus-stack/
 - metrics-server/
+- openebs/
 - postgres-operator/
 - sops-secrets-operator/
