@@ -8,6 +8,7 @@ resources:
 - media-pvc.yaml
 - namespace.yaml
 - postgres.yaml
+- postgres-exporter.yaml
 - secrets.yaml
 - service.yaml
 configMapGenerator:
