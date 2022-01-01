@@ -1,0 +1,32 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: postgres-exporter
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: prometheus-postgres-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+      version: 2.4.0
+  interval: 1m0s
+  releaseName: postgres-exporter
+  targetNamespace: invidious
+  timeout: 1m
+  values:
+    serviceMonitor:
+      enabled: true
+      namespace: monitoring
+      labels:
+        release: monitoring
+    config:
+      datasource:
+        host: invidious-db
+        passwordSecret:
+          name: postgres.invidious-db.credentials.postgresql.acid.zalan.do
+          key: password
+        sslmode: require
