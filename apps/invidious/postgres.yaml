@@ -6,6 +6,7 @@ spec:
   teamId: invidious
   volume:
     size: 10Gi
+    storageClass: openebs-hostpath
   numberOfInstances: 2
   users:
     kemal: []

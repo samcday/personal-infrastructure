@@ -6,6 +6,7 @@ spec:
   teamId: synapse
   volume:
     size: 10Gi
+    storageClass: openebs-hostpath
   numberOfInstances: 2
   users:
     synapse_user: []
