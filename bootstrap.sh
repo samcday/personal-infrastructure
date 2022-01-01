@@ -176,6 +176,16 @@ networking:
   serviceSubnet: $service_cidr
   podSubnet: $pod_cidr
 kubernetesVersion: $kube_version
+controllerManager:
+  extraArgs:
+    bind-address: 0.0.0.0
+scheduler:
+  extraArgs:
+    bind-address: 0.0.0.0
+etcd:
+  local:
+    extraArgs:
+      listen-metrics-urls: http://0.0.0.0:2381
 ---
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: InitConfiguration
