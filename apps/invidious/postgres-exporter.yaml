@@ -14,7 +14,7 @@ spec:
         namespace: flux-system
       version: 2.4.0
   interval: 1m0s
-  releaseName: postgres-exporter
+  releaseName: invidious-postgres-exporter
   targetNamespace: invidious
   timeout: 1m
   values:
