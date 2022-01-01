@@ -5,6 +5,7 @@ resources:
 - certificate.yaml
 - deployment.yaml
 - ingress.yaml
+- mautrix-signal.yaml
 - media-pvc.yaml
 - namespace.yaml
 - postgres.yaml
@@ -13,6 +14,10 @@ resources:
 - service.yaml
 configMapGenerator:
 - files:
-  - homeserver.yaml
-  - log.yaml
+  - config/homeserver.yaml
+  - config/log.yaml
+  - config/appservice-mautrix-signal.yaml
   name: homeserver
+- files:
+  - config/mautrix-signal.yaml
+  name: mautrix-signal

@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mautrix-signal
+  name: mautrix-signal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mautrix-signal
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mautrix-signal
+    spec:
+      containers:
+      - image: signald/signald:0.15.0-40-56a6c9d2
+        name: signald
+        volumeMounts:
+        - name: signald
+          mountPath: /signald
+      - image: dock.mau.dev/mautrix/signal:v0.2.1
+        name: mautrix-signal
+        ports:
+        - containerPort: 29328
+        env:
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: signald
+          mountPath: /signald
+      initContainers:
+      - name: config
+        image: alpine:3.15.0
+        command:
+        - sh
+        - -c
+        - |-
+          apk add gettext
+          envsubst < /config-template/mautrix-signal.yaml > /data/config.yaml
+          touch /data/registration.yaml
+        env:
+        - name: PGPASS
+          valueFrom:
+            secretKeyRef:
+              name: signal-user.synapse-db.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: SHARED_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-signal
+              key: SHARED_SECRET
+        - name: AS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-signal
+              key: AS_TOKEN
+        - name: HS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-signal
+              key: HS_TOKEN
+        volumeMounts:
+        - name: config-template
+          mountPath: /config-template
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: config-template
+        configMap:
+          name: mautrix-signal
+      - name: data
+        emptyDir: {}
+      - name: signald
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mautrix-signal
+  name: mautrix-signal
+spec:
+  ports:
+  - port: 29328
+    protocol: TCP
+    targetPort: 29328
+  selector:
+    app: mautrix-signal

@@ -42,22 +42,38 @@ spec:
           apk add gettext
           cp /config-template/log.yaml /config/log.yaml
           envsubst < /config-template/homeserver.yaml > /config/homeserver.yaml
+          envsubst < /config-template/appservice-mautrix-signal.yaml > /config/appservice-mautrix-signal.yaml
         env:
         - name: PGPASS
           valueFrom:
             secretKeyRef:
               name: synapse-user.synapse-db.credentials.postgresql.acid.zalan.do
               key: password
-        - name: MACROON_SECRET_KEY
+        - name: MACAROON_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: synapse
-              key: MACROON_SECRET_KEY
+              key: MACAROON_SECRET_KEY
         - name: REGISTRATION_SECRET
           valueFrom:
             secretKeyRef:
               name: synapse
               key: REGISTRATION_SECRET
+        - name: SIGNAL_AS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-signal
+              key: AS_TOKEN
+        - name: SIGNAL_HS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-signal
+              key: HS_TOKEN
+        - name: SIGNAL_SENDER_LOCALPART
+          valueFrom:
+            secretKeyRef:
+              name: synapse
+              key: SIGNAL_SENDER_LOCALPART
         volumeMounts:
         - name: config-template
           mountPath: /config-template

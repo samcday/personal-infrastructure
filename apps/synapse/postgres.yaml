@@ -10,8 +10,10 @@ spec:
   numberOfInstances: 2
   users:
     synapse_user: []
+    signal_user: []
   databases:
     synapse: synapse_user
+    signal: signal_user
   postgresql:
     version: "13"
   patroni:
