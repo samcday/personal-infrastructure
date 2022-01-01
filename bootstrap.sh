@@ -195,6 +195,10 @@ nodeRegistration:
   kubeletExtraArgs:
     node-ip: $private_ip
     cloud-provider: external
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+metricsBindAddress: 0.0.0.0:10249
 KUBEADM
 
   hcloud server ssh cluster1 "kubeadm init --config /dev/stdin" </tmp/kubeadm
