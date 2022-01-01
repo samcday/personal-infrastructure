@@ -6,6 +6,7 @@ resources:
 - core/hcloud-controller-manager
 - core/hcloud-csi-driver
 - core/ingress-nginx
+- core/kube-prometheus-stack
 - core/metrics-server
 - core/postgres-operator
 - core/sops-secrets-operator
