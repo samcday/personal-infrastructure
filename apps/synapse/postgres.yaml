@@ -11,9 +11,11 @@ spec:
   users:
     synapse_user: []
     signal_user: []
+    whatsapp_user: []
   databases:
     synapse: synapse_user
     signal: signal_user
+    whatsapp: whatsapp_user
   postgresql:
     version: "13"
   patroni:

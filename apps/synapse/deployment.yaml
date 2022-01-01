@@ -43,6 +43,7 @@ spec:
           cp /config-template/log.yaml /config/log.yaml
           envsubst < /config-template/homeserver.yaml > /config/homeserver.yaml
           envsubst < /config-template/appservice-mautrix-signal.yaml > /config/appservice-mautrix-signal.yaml
+          envsubst < /config-template/appservice-mautrix-whatsapp.yaml > /config/appservice-mautrix-whatsapp.yaml
         env:
         - name: PGPASS
           valueFrom:
@@ -74,6 +75,21 @@ spec:
             secretKeyRef:
               name: synapse
               key: SIGNAL_SENDER_LOCALPART
+        - name: WA_AS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-whatsapp
+              key: AS_TOKEN
+        - name: WA_HS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-whatsapp
+              key: HS_TOKEN
+        - name: WA_SENDER_LOCALPART
+          valueFrom:
+            secretKeyRef:
+              name: synapse
+              key: WA_SENDER_LOCALPART
         volumeMounts:
         - name: config-template
           mountPath: /config-template

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mautrix-whatsapp
+  name: mautrix-whatsapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mautrix-whatsapp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mautrix-whatsapp
+    spec:
+      containers:
+      - image: dock.mau.dev/mautrix/whatsapp:v0.2.1
+        name: mautrix-whatsapp
+        ports:
+        - containerPort: 29318
+        env:
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      initContainers:
+      - name: config
+        image: alpine:3.15.0
+        command:
+        - sh
+        - -c
+        - |-
+          apk add gettext
+          envsubst < /config-template/mautrix-whatsapp.yaml > /data/config.yaml
+          touch /data/registration.yaml
+        env:
+        - name: PGPASS
+          valueFrom:
+            secretKeyRef:
+              name: whatsapp-user.synapse-db.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: SHARED_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-whatsapp
+              key: SHARED_SECRET
+        - name: AS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-whatsapp
+              key: AS_TOKEN
+        - name: HS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-whatsapp
+              key: HS_TOKEN
+        volumeMounts:
+        - name: config-template
+          mountPath: /config-template
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: config-template
+        configMap:
+          name: mautrix-whatsapp
+      - name: data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mautrix-whatsapp
+  name: mautrix-whatsapp
+spec:
+  ports:
+  - port: 29318
+    protocol: TCP
+    targetPort: 29318
+  selector:
+    app: mautrix-whatsapp
