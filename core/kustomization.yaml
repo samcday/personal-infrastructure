@@ -11,3 +11,4 @@ resources:
 - openebs/
 - postgres-operator/
 - sops-secrets-operator/
+- system-upgrade-controller/
