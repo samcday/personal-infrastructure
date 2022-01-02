@@ -12,3 +12,4 @@ resources:
 - postgres-operator/
 - sops-secrets-operator/
 - system-upgrade-controller/
+- tailscale/
