@@ -6,6 +6,7 @@ resources:
 - deployment.yaml
 - ingress.yaml
 - mautrix-signal.yaml
+- mautrix-telegram.yaml
 - mautrix-whatsapp.yaml
 - media-pvc.yaml
 - namespace.yaml
@@ -16,6 +17,7 @@ resources:
 configMapGenerator:
 - files:
   - config/appservice-mautrix-signal.yaml
+  - config/appservice-mautrix-telegram.yaml
   - config/appservice-mautrix-whatsapp.yaml
   - config/homeserver.yaml
   - config/log.yaml
@@ -23,6 +25,10 @@ configMapGenerator:
 - files:
   - config/mautrix-signal.yaml
   name: mautrix-signal
+- files:
+  - config/mautrix-telegram.yaml
+  name: mautrix-telegram
+
 - files:
   - config/mautrix-whatsapp.yaml
   name: mautrix-whatsapp

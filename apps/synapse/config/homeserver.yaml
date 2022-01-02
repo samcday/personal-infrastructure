@@ -29,4 +29,5 @@ serve_server_wellknown: true
 registration_shared_secret: ${REGISTRATION_SECRET}
 app_service_config_files:
 - /config/appservice-mautrix-signal.yaml
+- /config/appservice-mautrix-telegram.yaml
 - /config/appservice-mautrix-whatsapp.yaml

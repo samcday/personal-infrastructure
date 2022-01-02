@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mautrix-telegram
+  name: mautrix-telegram
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mautrix-telegram
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mautrix-telegram
+    spec:
+      containers:
+      - image: dock.mau.dev/mautrix/telegram:v0.11.0
+        name: mautrix-telegram
+        ports:
+        - containerPort: 29317
+        env:
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      initContainers:
+      - name: config
+        image: alpine:3.15.0
+        command:
+        - sh
+        - -c
+        - |-
+          apk add gettext
+          envsubst < /config-template/mautrix-telegram.yaml > /data/config.yaml
+          touch /data/registration.yaml
+        env:
+        - name: PGPASS
+          valueFrom:
+            secretKeyRef:
+              name: telegram-user.synapse-db.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: SHARED_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-telegram
+              key: SHARED_SECRET
+        - name: AS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-telegram
+              key: AS_TOKEN
+        - name: HS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-telegram
+              key: HS_TOKEN
+        - name: API_ID
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-telegram
+              key: API_ID
+        - name: API_HASH
+          valueFrom:
+            secretKeyRef:
+              name: mautrix-telegram
+              key: API_HASH
+        volumeMounts:
+        - name: config-template
+          mountPath: /config-template
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: config-template
+        configMap:
+          name: mautrix-telegram
+      - name: data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mautrix-telegram
+  name: mautrix-telegram
+spec:
+  ports:
+  - port: 29317
+    protocol: TCP
+    targetPort: 29317
+  selector:
+    app: mautrix-telegram
