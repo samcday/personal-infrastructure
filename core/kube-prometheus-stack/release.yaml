@@ -36,3 +36,8 @@ spec:
       serviceMonitor:
         https: true
         insecureSkipVerify: true
+    kube-state-metrics:
+      prometheus:
+        monitor:
+          additionalLabels:
+            release: monitoring
