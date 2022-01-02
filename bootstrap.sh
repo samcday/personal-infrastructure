@@ -1,5 +1,18 @@
 #!/bin/bash
-set -uexo pipefail
+set -ueo pipefail
+
+# This script bootstraps a 3 node Kubernetes cluster in Hetzner Cloud.
+# The cluster nodes will be in a private network, fronted by a load balancer, and protected by a firewall.
+# The script is idempotent, it can be run repeatedly until completely successful.
+# This means it can also be used to partially rebuild an existing cluster.
+# This script requires the following tools:
+required_tools=(hcloud jq kubectl cilium flux)
+for command in "${required_tools[@]}"; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    echo "ERROR: $command not found"
+    exit 1
+  fi
+done
 
 server_type=cx21
 image=ubuntu-20.04
@@ -19,100 +32,115 @@ if [[ -z "${HCLOUD_TOKEN:-}" ]]; then
 fi
 export HCLOUD_TOKEN
 
-# Creates a placement group to ensure master nodes 
-function setup_placement_group() {
-  if ! hcloud placement-group describe cluster >/dev/null 2>&1; then
-    hcloud placement-group create --name cluster --type spread
+# Create a placement group to ensure the 3 nodes are spread across multiple failure zones.
+if ! hcloud placement-group describe cluster >/dev/null 2>&1; then
+  hcloud placement-group create --name cluster --type spread
+fi
+
+echo placement group configured
+
+# Create a private network for intra-cluster traffic.
+if ! hcloud network describe cluster -o json >/tmp/network.json 2>/dev/null; then
+  hcloud network create --ip-range $network_cidr --name cluster
+  hcloud network describe cluster -o json >/tmp/network.json
+fi
+
+# Subnets in Hetzner Cloud are not yet feature complete, so we just create one spanning the whole network.
+if [[ -z "$(jq ".subnets | map(select(.ip_range == \"$network_cidr\")) | .[]" < /tmp/network.json)" ]]; then
+  hcloud network add-subnet cluster --ip-range $network_cidr --network-zone eu-central --type cloud
+fi
+
+echo network configured
+
+# Create a load balancer. It will provide HA for Kubernetes API Server, as well as regular HTTP(S) ingress.
+if ! hcloud load-balancer describe cluster -o json > /tmp/lb.json 2>/dev/null; then
+  hcloud load-balancer create --algorithm-type round_robin --location $location --name cluster --type $loadbalancer_type
+  hcloud load-balancer describe cluster -o json > /tmp/lb.json
+fi
+
+# The load balancer is attached to the private network, this way the nodes do not need to listen on the public 'net.
+network_id=$(jq .id < /tmp/network.json)
+if [[ -z "$(jq ".private_net | map(select(.network == $network_id)) | .[]" < /tmp/lb.json)" ]]; then
+  hcloud load-balancer attach-to-network cluster --network cluster
+fi
+
+# HTTP(S) traffic uses proxy protocol, so that ingress-nginx in the cluster knows where the original request came from.
+for port in 80:32080:--proxy-protocol 443:32443:--proxy-protocol 6443:6443:; do
+  listen_port=$(echo $port | cut -d':' -f1)
+  dest_port=$(echo $port | cut -d':' -f2)
+  flags=$(echo $port | cut -d':' -f3)
+
+  if [[ -z "$(jq ".services | map(select(.listen_port == $listen_port)) | .[]" < /tmp/lb.json)" ]]; then
+    hcloud load-balancer add-service cluster --destination-port "$dest_port" --listen-port "$listen_port" --protocol tcp "$flags"
   fi
-}
+done 
 
-function setup_loadbalancer() {
-  if ! hcloud load-balancer describe cluster >/dev/null 2>&1; then
-    hcloud load-balancer create --algorithm-type round_robin --location $location --name cluster --type $loadbalancer_type
+# The load balancer sends traffic to nodes based on labels. The base 3 nodes will have a "cluster" label.
+# The cluster will also be autoscaled, using cluster-autoscaler. The worker nodes have a different label.
+labels=(cluster hcloud/node-group=pool)
+for label in "${labels[@]}"; do
+  if [[ -z "$(jq ".targets | map(select(.label_selector.selector==\"$label\")) | .[]" < /tmp/lb.json)" ]]; then
+    hcloud load-balancer add-target cluster --label-selector $label --use-private-ip
   fi
+done
 
-  for port in 80:32080:--proxy-protocol 443:32443:--proxy-protocol 6443:6443:; do
-    listen_port=$(echo $port | cut -d':' -f1)
-    dest_port=$(echo $port | cut -d':' -f2)
-    flags=$(echo $port | cut -d':' -f3)
+echo loadbalancer configured
 
-    if [[ -z "$(hcloud load-balancer describe cluster -o json | jq ".services | map(select(.listen_port == $listen_port)) | .[]")" ]]; then
-      hcloud load-balancer add-service cluster --destination-port "$dest_port" --listen-port "$listen_port" --protocol tcp "$flags"
-    fi
-  done
-}
+# The firewall protects all cluster nodes and is heavily restricted.
+if ! hcloud firewall describe cluster -o json > /tmp/firewall.json 2>/dev/null; then
+  hcloud firewall create --name cluster
+  hcloud firewall describe cluster > /tmp/firewall.json
+fi
 
-function setup_network() {
-  if ! hcloud network describe cluster >/dev/null 2>&1; then
-    hcloud network create --ip-range $network_cidr --name cluster
+# Similar to the load balancer, the firewall is attached to label selectors matching the base + autoscaled nodes.
+for label in "${labels[@]}"; do
+  if [[ -z "$(jq ".applied_to | map(select(.label_selector.selector==\"$label\")) | .[]" < /tmp/firewall.json)" ]]; then
+    hcloud firewall apply-to-resource cluster --type label_selector --label-selector $label
   fi
-  if [[ -z "$(hcloud network describe cluster -o json | jq ".subnets | map(select(.ip_range == \"$network_cidr\")) | .[]")" ]]; then
-    hcloud network add-subnet cluster --ip-range $network_cidr --network-zone eu-central --type cloud
+done
+
+# In its operational state, all external traffic comes in via the load balancer. The LB talks to the nodes via the
+# private network. Intra-cluster traffic (pods talking to pods/services, etc) also routes through the private network.
+# As such, the firewall typically requires no inbound rules at all (drop all traffic from external sources).
+# It's only during bootstrapping that we need direct SSH access to the nodes. Later, a Tailscale subnet router will
+# be deployed into the cluster to access internal services / nodes. Whilst not strictly necessary, UDP 41641 is opened
+# to allow efficient NAT traversal (and avoid using a relay).
+ports=(22:tcp:TempSSH 41641:udp:Tailscale)
+for port in "${ports[@]}"; do
+  name=$(echo "$port" | cut -d':' -f3)
+  prot=$(echo "$port" | cut -d':' -f2)
+  port=$(echo "$port" | cut -d':' -f1)
+  if [[ -z "$(jq ".rules | map(select(.direction==\"in\" and .port==\"$port\")) | .[]" < /tmp/firewall.json)" ]]; then
+    hcloud firewall add-rule cluster --description="$name" --protocol="$prot" --port="$port" --direction=in --source-ips=0.0.0.0/0 --source-ips=::/0
   fi
-}
+done
 
-function attach_lb_to_network() {
-  network_id=$(hcloud network describe cluster -o json | jq .id)
+echo firewall configured
 
-  if [[ -z "$(hcloud load-balancer describe cluster -o json | jq ".private_net | map(select(.network == $network_id)) | .[]")" ]]; then
-    hcloud load-balancer attach-to-network cluster --network cluster
-  fi
-}
+# Now we're finally ready to bootstrap the nodes proper.
+loadbalancer_ip=$(jq -r .public_net.ipv4.ip < /tmp/lb.json)
 
-function setup_firewall() {
-  if ! hcloud firewall describe cluster >/dev/null 2>&1; then
-    hcloud firewall create --name cluster --rules-file - <<RULES
-[
-  {
-    "description": "SSH",
-    "destination_ips": [],
-    "direction": "in",
-    "port": "22",
-    "protocol": "tcp",
-    "source_ips": [
-      "0.0.0.0/0",
-      "::/0"
-    ]
-  },
-  {
-    "description": "Wireguard",
-    "destination_ips": [],
-    "direction": "in",
-    "port": "51871",
-    "protocol": "udp",
-    "source_ips": [
-      "0.0.0.0/0",
-      "::/0"
-    ]
-  }
-]
-RULES
-  fi
-}
-
-function setup_control_node() {
-  if ! hcloud server describe "$1" >/dev/null 2>&1; then
+for name in cluster{1..3}; do
+  if ! hcloud server describe $name -o json >/tmp/server-$name.json 2>/dev/null; then
     hcloud server create \
-      --name "$1" \
+      --name $name \
       --type $server_type \
       --placement-group cluster \
       --ssh-key $ssh_key \
       --image $image \
       --location $location \
-      --firewall cluster \
+      --label cluster= \
       --network cluster
-    ssh-keygen -R "$(hcloud server ip "$1")"
+    hcloud server describe $name -o json >/tmp/server-$name.json
   fi
 
-  server_id=$(hcloud server describe "$1" -o "format={{.ID}}")
-
-  if [[ -z "$(hcloud load-balancer describe cluster -o json | jq ".targets | map(select(.server.id == $server_id)) | .[]")" ]]; then
-    hcloud load-balancer add-target cluster --server "$1" --use-private-ip
-  fi
-
-  server_ip=$(hcloud server ip "$1")
+  # Nuke any existing host keys for this node (Hetzner Cloud recycles IPs as a "feature", annoying 99% of the time)
+  # and then wait for it to accept SSH connections.
+  server_ip=$(jq -r .public_net.ipv4.ip < /tmp/server-$name.json)
+  ssh-keygen -R "$server_ip"
   until ssh -o StrictHostKeyChecking=accept-new root@"$server_ip" echo hi mom >/dev/null 2>&1; do sleep 1; done
 
+  # Jump into this new node and install Docker + kube components on it.
   ssh -T root@"$server_ip" kube_version=$kube_version bash <<-"INIT"
     set -ueo pipefail
     export DEBIAN_FRONTEND=noninteractive
@@ -137,36 +165,23 @@ function setup_control_node() {
       apt-mark hold kubelet kubeadm kubectl
     fi
 INIT
-}
-
-setup_placement_group &
-setup_loadbalancer &
-setup_network &
-setup_firewall &
-
-# shellcheck disable=SC2046
-wait $(jobs -p)
-
-attach_lb_to_network
-
-loadbalancer_ip=$(hcloud load-balancer describe cluster -o json | jq -r .public_net.ipv4.ip)
-
-for name in cluster{1..3}; do
-  setup_control_node "$name" &
+  echo node $name configured
 done
 
-# shellcheck disable=SC2046
-wait $(jobs -p)
-
+# We now have 3 nodes up and running. Maybe this script is running later and there's already a cluster setup on at
+# least one of the nodes, though. Let's quickly check.
 cluster_master=""
 for name in cluster{1..3}; do
-  if [[ "$(hcloud server ssh $name '[[ -f /etc/kubernetes/admin.conf ]] && echo "yes" || echo "no"')" == "yes" ]]; then
+  server_ip=$(jq -r .public_net.ipv4.ip < /tmp/server-$name.json)
+  if [[ "$(ssh root@"$server_ip" '[[ -f /etc/kubernetes/admin.conf ]] && echo "yes" || echo "no"')" == "yes" ]]; then
     cluster_master=$name
   fi
 done
 
 if [[ -z "$cluster_master" ]]; then
-  private_ip=$(hcloud server describe cluster1 -o json | jq -r '.private_net[0].ip')
+  # No cluster yet. Run kubeadm init on the first node to create one.
+  server_ip=$(jq -r .public_net.ipv4.ip < /tmp/server-cluster1.json)
+  private_ip=$(jq -r '.private_net[0].ip' < /tmp/server-cluster1.json)
   cat > /tmp/kubeadm <<KUBEADM
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
@@ -201,10 +216,11 @@ kind: KubeProxyConfiguration
 metricsBindAddress: 0.0.0.0:10249
 KUBEADM
 
-  hcloud server ssh cluster1 "kubeadm init --config /dev/stdin" </tmp/kubeadm
+  ssh root@"$server_ip" "kubeadm init --config /dev/stdin" </tmp/kubeadm
   cluster_master=cluster1
 fi
 
+# A cluster now exists, make sure it's added to the local kubeconfig.
 if ! kubectl config get-contexts | grep personal-admin@personal >/dev/null 2>&1; then
   mkdir -p ~/.kube
   hcloud server ssh $cluster_master 'cat /etc/kubernetes/admin.conf | sed -e s/kubernetes-admin/personal-admin/' > ~/.kube/personal.conf
@@ -213,8 +229,15 @@ if ! kubectl config get-contexts | grep personal-admin@personal >/dev/null 2>&1;
   rm ~/.kube/personal.conf
 fi
 
-discovery_token_hash=sha256:$(hcloud server ssh $cluster_master -T "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
-join_token=$(hcloud server ssh $cluster_master -T <<"TOKEN"
+echo cluster initialized
+
+# Now it's time to join the remaining nodes into the cluster.
+# We'll be needing a hash of the root Kubernetes CA cert for `kubeadm join` later.
+cluster_master_ip=$(jq -r .public_net.ipv4.ip < /tmp/server-$cluster_master.json)
+discovery_token_hash=sha256:$(ssh root@"$cluster_master_ip" -T "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
+
+# We'll also need a bootstrap token.
+join_token=$(ssh root@"$cluster_master_ip" -T <<"TOKEN"
   token=$(kubeadm token list | grep authentication | cut -d' ' -f1 | tail -n1)
   if [[ -z "$token" ]]; then
     token=$(kubeadm token generate)
@@ -223,7 +246,7 @@ join_token=$(hcloud server ssh $cluster_master -T <<"TOKEN"
 TOKEN
 )
 
-cert_key=$(hcloud server ssh $cluster_master -T <<"CERTS"
+cert_key=$(ssh root@"$cluster_master_ip" -T <<"CERTS"
   set -ueo pipefail
   cert_key=$(kubeadm certs certificate-key)
   kubeadm init phase upload-certs --upload-certs --certificate-key $cert_key >/dev/null
@@ -232,7 +255,8 @@ CERTS
 )
 
 for name in cluster{1..3}; do
-  private_ip=$(hcloud server describe $name -o json | jq -r '.private_net[0].ip')
+  private_ip=$(jq -r '.private_net[0].ip' < /tmp/server-$name.json)
+  public_ip=$(jq -r '.public_net.ipv4.ip' < /tmp/server-$name.json)
   cat > /tmp/kubeadm <<KUBEADM
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: JoinConfiguration
@@ -251,25 +275,38 @@ nodeRegistration:
     cloud-provider: external
 KUBEADM
 
-  hcloud server ssh $name "if [[ ! -f /etc/kubernetes/kubelet.conf ]]; then kubeadm join --config /dev/stdin; fi" < /tmp/kubeadm
+  ssh root@"$public_ip" "if [[ ! -f /etc/kubernetes/kubelet.conf ]]; then kubeadm join --config /dev/stdin; fi" < /tmp/kubeadm
 done
+
+# On the home stretch now! Time to get some baseline cluster stuff setup.
 
 kube_ctx="--context=personal-admin@personal"
 kubectl="kubectl $kube_ctx"
 
+# CNI plugin, this cluster uses Cilium because eBPF is Web Scale apparently.
 if ! $kubectl -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
   cilium install $kube_ctx --encryption=wireguard
 fi
 
+echo cilium installed
+
+# We'll stuff the HCLOUD_TOKEN we've been using all this time into the cluster as well.
+# The cluster autoscaler, hcloud CSI driver and CCM all need it.
 $kubectl -n kube-system create secret generic hcloud --from-literal=HCLOUD_TOKEN=$HCLOUD_TOKEN -o yaml --dry-run=client \
   | $kubectl apply -f-
 
+# The hash of the Kubernetes CA will be useful for cluster-autoscaler later, when bringing up new workers.
 $kubectl -n kube-system create secret generic discovery-token-hash --from-literal=hash="$discovery_token_hash" -o yaml --dry-run=client \
   | $kubectl apply -f-
 
+# Lots of secrets in this repo, they're encrypted with Age, using Mozilla SOPS. All secrets are encrypted against
+# a cluster keypair. The private part of this keypair is in turn encrypted to my personal SSH keypair.
 $kubectl -n kube-system create secret generic age-key --from-file=age-key.txt=<(age -d -i ~/.ssh/id_ed25519 < age-key.txt) -o yaml --dry-run=client \
   | $kubectl apply -f-
 
+echo cluster secrets configured
+
+# All the manifests are continuously applied with Flux2.
 if ! $kubectl -n flux-system get namespace flux-system >/dev/null 2>&1; then
   flux install $kube_ctx --toleration-keys=node-role.kubernetes.io/master
 fi
@@ -288,4 +325,9 @@ if ! $kubectl -n flux-system get kustomization personal-infrastructure >/dev/nul
     --path .
 fi
 
+echo flux configured
+
+# Done. The fruits of our labor:
 $kubectl get nodes
+
+echo "all done"
