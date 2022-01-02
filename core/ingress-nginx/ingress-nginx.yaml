@@ -16,7 +16,6 @@ metadata:
   namespace: flux-system
 spec:
   targetNamespace: ingress-nginx
-  timeout: 1m
   install:
     createNamespace: true
   chart:
