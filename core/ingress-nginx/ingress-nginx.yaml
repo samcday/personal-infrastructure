@@ -36,8 +36,6 @@ spec:
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
-      nodeSelector:
-        node-role.kubernetes.io/master: ""
       service:
         type: NodePort
         nodePorts:
