@@ -20,9 +20,7 @@ spec:
   values:
     serviceMonitor:
       enabled: true
-      namespace: monitoring
-      labels:
-        release: monitoring
+      namespace: synapse
     config:
       datasource:
         host: synapse-db
