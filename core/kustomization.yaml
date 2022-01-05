@@ -6,6 +6,7 @@ resources:
 - hcloud-controller-manager/
 - hcloud-csi-driver/
 - ingress-nginx/
+- kube-config-syncer/
 - kube-prometheus-stack/
 - metrics-server/
 - openebs/
