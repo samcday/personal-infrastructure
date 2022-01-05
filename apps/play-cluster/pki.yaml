@@ -1,0 +1,53 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: play-cluster
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubernetes-ca
+  namespace: play-cluster
+spec:
+  isCA: true
+  commonName: kubernetes-ca
+  secretName: kubernetes-ca
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: kubernetes-ca-issuer
+  namespace: play-cluster
+spec:
+  ca:
+    secretName: kubernetes-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: apiserver-etcd
+  namespace: etcd
+spec:
+  secretName: apiserver-etcd
+  secretTemplate:
+    annotations:
+      kubed.appscode.com/sync: "playcluster="
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [client auth]
+  commonName: play-cluster
+  issuerRef:
+    name: etcd-issuer
+    kind: Issuer
+    group: cert-manager.io

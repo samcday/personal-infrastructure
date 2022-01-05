@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: generate-sa
+  namespace: play-cluster
+spec:
+  template:
+    spec:
+      containers:
+      - name: kubectl
+        command:
+        - /bin/bash
+        - -c
+        - |-
+          set -uexo pipefail
+          if kubectl describe secret/sa; then exit; fi
+          openssl genrsa -out /tmp/key 2048
+          cat /tmp/key | openssl rsa -pubout > /tmp/pub
+          kubectl create secret generic sa --from-file=/tmp/key --from-file=/tmp/pub
+        image: bitnami/kubectl:1.21.8
+      serviceAccountName: generate-sa
+      restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: generate-sa
+  namespace: play-cluster
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: generate-sa
+  namespace: play-cluster
+rules:
+- apiGroups: [""]
+  resources: [secrets]
+  resourceNames: [sa]
+  verbs: [get]
+- apiGroups: [""]
+  resources: [secrets]
+  verbs: [create]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: generate-sa
+  namespace: play-cluster
+subjects:
+- kind: ServiceAccount
+  name: generate-sa
+roleRef:
+  kind: Role
+  name: generate-sa
+  apiGroup: rbac.authorization.k8s.io

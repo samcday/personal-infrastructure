@@ -1,0 +1,66 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: apiserver
+  namespace: play-cluster
+spec:
+  secretName: apiserver-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [server auth]
+  dnsNames: ["apiserver.play-cluster.svc.cluster.local"]
+  issuerRef:
+    name: kubernetes-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: apiserver
+  name: apiserver
+  namespace: play-cluster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apiserver
+  template:
+    metadata:
+      labels:
+        app: apiserver
+    spec:
+      containers:
+      - image: k8s.gcr.io/kube-apiserver:v1.21.8
+        name: kube-apiserver
+        command:
+        - kube-apiserver
+        - --etcd-cafile=/opt/certs/etcd-client/ca.crt
+        - --etcd-certfile=/opt/certs/etcd-client/tls.crt
+        - --etcd-keyfile=/opt/certs/etcd-client/tls.key
+        - --etcd-prefix=/play-cluster
+        - --etcd-servers=https://etcd.etcd.svc.cluster.local:2379
+        - --service-account-issuer=https://apiserver.play-cluster.svc.cluster.local
+        - --service-account-key-file=/opt/sa/pub
+        - --service-account-signing-key-file=/opt/sa/key
+        - --tls-cert-file=/opt/certs/apiserver/tls.crt
+        - --tls-private-key-file=/opt/certs/apiserver/tls.key
+        volumeMounts:
+        - mountPath: /opt/certs/apiserver
+          name: apiserver
+        - mountPath: /opt/certs/etcd-client
+          name: etcd-client
+        - mountPath: opt/sa
+          name: sa
+      volumes:
+      - name: apiserver
+        secret:
+          secretName: apiserver-cert
+      - name: etcd-client
+        secret:
+          secretName: apiserver-etcd
+      - name: sa
+        secret:
+          secretName: sa
