@@ -278,6 +278,9 @@ KUBEADM
   ssh root@"$public_ip" "if [[ ! -f /etc/kubernetes/kubelet.conf ]]; then kubeadm join --config /dev/stdin; fi" < /tmp/kubeadm
 done
 
+# Done with SSH stuff, we can close off SSH access now.
+hcloud firewall delete-rule cluster --direction=in --protocol=tcp --source-ips=0.0.0.0/0 --source-ips=::/0 --port 22 --description=TempSSH
+
 # On the home stretch now! Time to get some baseline cluster stuff setup.
 
 kube_ctx="--context=personal-admin@personal"
