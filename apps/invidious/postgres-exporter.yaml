@@ -13,10 +13,9 @@ spec:
         name: prometheus-community
         namespace: flux-system
       version: 2.4.0
-  interval: 1m0s
+  interval: 30m
   releaseName: invidious-postgres-exporter
   targetNamespace: invidious
-  timeout: 1m
   values:
     serviceMonitor:
       enabled: true

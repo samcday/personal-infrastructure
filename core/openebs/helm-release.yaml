@@ -14,10 +14,9 @@ spec:
       version: 3.0.6
   install:
     createNamespace: true
-  interval: 1m0s
+  interval: 30m
   releaseName: openebs
   targetNamespace: openebs
-  timeout: 1m
   values:
     ndm:
       enabled: false

@@ -11,12 +11,12 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
+      version: 27.2.1
   install:
     createNamespace: true
-  interval: 1m0s
+  interval: 30m
   releaseName: monitoring
   targetNamespace: monitoring
-  timeout: 1m
   values:
     kubeControllerManager:
       service:
