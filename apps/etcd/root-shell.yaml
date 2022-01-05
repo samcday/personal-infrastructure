@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: root-shell
+  namespace: etcd
+spec:
+  containers:
+  - command:
+    - sleep
+    - infinity
+    env:
+    - name: ETCDCTL_CACERT
+      value: /opt/certs/ca.crt
+    - name: ETCDCTL_CERT
+      value: /opt/certs/tls.crt
+    - name: ETCDCTL_KEY
+      value: /opt/certs/tls.key
+    - name: ETCDCTL_ENDPOINTS
+      value: etcd.etcd.svc.cluster.local:2379
+    image: quay.io/coreos/etcd:v3.5.1
+    name: etcd
+    volumeMounts:
+    - mountPath: /opt/certs
+      name: certs
+  restartPolicy: Always
+  volumes:
+  - name: certs
+    secret:
+      secretName: root-user
