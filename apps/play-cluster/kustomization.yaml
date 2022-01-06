@@ -12,3 +12,4 @@ resources:
 - generate-sa.yaml
 - namespace.yaml
 - pki.yaml
+- scheduler.yaml
