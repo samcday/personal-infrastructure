@@ -1,6 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- defrag-job.yaml
 - https://github.com/samcday/etcd-kube/
 - root-shell.yaml
 - root-user.yaml
@@ -12,9 +13,12 @@ patches:
     name: etcd
     namespace: etcd
   patch: |-
+    # Allow etcd members to be scheduled on control plane.
     - op: replace
       path: /spec/template/spec/tolerations
       value: [{key: node-role.kubernetes.io/master, operator: Exists}]
+
+    # Don't schedule etcd members on the same node.
     - op: replace
       path: /spec/template/spec/affinity
       value:
@@ -26,6 +30,13 @@ patches:
                 operator: In
                 values: [etcd]
             topologyKey: "kubernetes.io/hostname"
+
+    # Look for etcd RBAC usernames in the CN of presented client certificates.
     - op: add
       path: /spec/template/spec/containers/0/command/-
       value: --client-cert-auth=true
+
+    # Compact the keyspace every 6 minutes, clearing out revisions older than an hour.
+    - op: add
+      path: /spec/template/spec/containers/0/command/-
+      value: --auto-compaction-retention=1

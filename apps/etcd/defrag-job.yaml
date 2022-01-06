@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: defrag
+  namespace: etcd
+spec:
+  jobTemplate:
+    metadata:
+      name: defrag
+    spec:
+      template:
+        spec:
+          containers:
+          - command:
+            - etcdctl
+            - defrag
+            - --cluster
+            image: quay.io/coreos/etcd:v3.5.1
+            name: defrag
+            env:
+            - name: ETCDCTL_CACERT
+              value: /opt/certs/ca.crt
+            - name: ETCDCTL_CERT
+              value: /opt/certs/tls.crt
+            - name: ETCDCTL_KEY
+              value: /opt/certs/tls.key
+            - name: ETCDCTL_ENDPOINTS
+              value: etcd.etcd.svc.cluster.local:2379
+            volumeMounts:
+            - mountPath: /opt/certs
+              name: certs
+          restartPolicy: Never
+          volumes:
+          - name: certs
+            secret:
+              secretName: root-user
+  schedule: '0 * * * *'
