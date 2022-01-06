@@ -39,6 +39,7 @@ spec:
         - kube-apiserver
         - --etcd-cafile=/opt/certs/etcd-client/ca.crt
         - --etcd-certfile=/opt/certs/etcd-client/tls.crt
+        - --etcd-compaction-interval=0
         - --etcd-keyfile=/opt/certs/etcd-client/tls.key
         - --etcd-prefix=/play-cluster
         - --etcd-servers=https://etcd.etcd.svc.cluster.local:2379
