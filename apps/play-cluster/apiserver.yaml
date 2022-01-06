@@ -105,3 +105,30 @@ spec:
     targetPort: 6443
   selector:
     app: apiserver
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apiserver
+  namespace: play-cluster
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    external-dns.alpha.kubernetes.io/hostname: apiserver.play-cluster.samcday.com
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: apiserver.play-cluster.samcday.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: apiserver
+            port:
+              number: 6443
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - apiserver.play-cluster.samcday.com
+    secretName: apiserver-cert
