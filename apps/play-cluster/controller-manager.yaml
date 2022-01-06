@@ -37,8 +37,10 @@ spec:
         name: kube-controller-manager
         command:
         - kube-controller-manager
+        - --allocate-node-cidrs=true
         - --authentication-kubeconfig=/opt/kubeconfig/kubeconfig
         - --authorization-kubeconfig=/opt/kubeconfig/kubeconfig
+        - --cluster-cidr=10.80.0.0/12
         - --cluster-name=play-cluster
         - --cluster-signing-cert-file=/opt/ca-cert/tls.crt
         - --cluster-signing-key-file=/opt/ca-cert/tls.key
@@ -46,6 +48,7 @@ spec:
         - --kubeconfig=/opt/kubeconfig/kubeconfig
         - --port=0
         - --service-account-private-key-file=/opt/sa/key
+        - --service-cluster-ip-range=10.96.0.0/12
         - --use-service-account-credentials=true
         volumeMounts:
         - mountPath: /opt/ca-cert

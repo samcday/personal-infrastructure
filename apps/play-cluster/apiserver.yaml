@@ -40,6 +40,7 @@ spec:
         name: kube-apiserver
         command:
         - kube-apiserver
+        - --allow-privileged
         - --authorization-mode=Node,RBAC
         - --client-ca-file=/opt/certs/apiserver/ca.crt
         - --egress-selector-config-file=/opt/esc/egress-selector-config.yaml
