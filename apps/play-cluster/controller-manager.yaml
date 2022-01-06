@@ -39,11 +39,17 @@ spec:
         - kube-controller-manager
         - --authentication-kubeconfig=/opt/kubeconfig/kubeconfig
         - --authorization-kubeconfig=/opt/kubeconfig/kubeconfig
+        - --cluster-name=play-cluster
+        - --cluster-signing-cert-file=/opt/ca-cert/tls.crt
+        - --cluster-signing-key-file=/opt/ca-cert/tls.key
+        - --controllers=*,bootstrapsigner,tokencleaner
         - --kubeconfig=/opt/kubeconfig/kubeconfig
         - --port=0
         - --service-account-private-key-file=/opt/sa/key
         - --use-service-account-credentials=true
         volumeMounts:
+        - mountPath: /opt/ca-cert
+          name: ca-cert
         - mountPath: /opt/cert
           name: cert
         - mountPath: /opt/kubeconfig
@@ -51,6 +57,9 @@ spec:
         - mountPath: /opt/sa
           name: sa
       volumes:
+      - name: ca-cert
+        secret:
+          secretName: kubernetes-ca
       - name: cert
         secret:
           secretName: controller-manager-cert

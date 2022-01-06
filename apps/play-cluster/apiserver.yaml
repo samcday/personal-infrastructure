@@ -43,6 +43,7 @@ spec:
         - --authorization-mode=Node,RBAC
         - --client-ca-file=/opt/certs/apiserver/ca.crt
         - --egress-selector-config-file=/opt/esc/egress-selector-config.yaml
+        - --enable-bootstrap-token-auth
         - --etcd-cafile=/opt/certs/etcd-client/ca.crt
         - --etcd-certfile=/opt/certs/etcd-client/tls.crt
         - --etcd-compaction-interval=0
