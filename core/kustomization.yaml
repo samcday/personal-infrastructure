@@ -8,6 +8,7 @@ resources:
 - ingress-nginx/
 - kube-config-syncer/
 - kube-prometheus-stack/
+- loki/
 - metrics-server/
 - openebs/
 - postgres-operator/
