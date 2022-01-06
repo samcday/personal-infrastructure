@@ -51,3 +51,22 @@ spec:
     name: etcd-issuer
     kind: Issuer
     group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: admin
+  namespace: play-cluster
+spec:
+  secretName: admin-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [client auth]
+  commonName: cluster-admin
+  subject:
+    organizations: [system:masters]
+  issuerRef:
+    name: kubernetes-ca-issuer
+    kind: Issuer
+    group: cert-manager.io

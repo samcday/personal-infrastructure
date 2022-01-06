@@ -1,6 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+configMapGenerator:
+- name: kubeconfig-template
+  files: [kubeconfig=kubeconfig-template]
+  namespace: play-cluster
 resources:
+- admin-shell.yaml
 - apiserver.yaml
 - generate-sa.yaml
 - namespace.yaml

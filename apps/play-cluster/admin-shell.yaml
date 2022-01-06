@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-shell
+  namespace: play-cluster
+spec:
+  containers:
+  - command:
+    - sleep
+    - infinity
+    env:
+    - name: KUBECONFIG
+      value: /opt/kubeconfig/kubeconfig
+    image: bitnami/kubectl:1.21.8
+    name: kubectl
+    volumeMounts:
+    - mountPath: /opt/cert
+      name: cert
+    - mountPath: /opt/kubeconfig
+      name: kubeconfig-template
+  restartPolicy: Always
+  volumes:
+  - name: cert
+    secret:
+      secretName: admin-cert
+  - name: kubeconfig-template
+    configMap:
+      name: kubeconfig-template

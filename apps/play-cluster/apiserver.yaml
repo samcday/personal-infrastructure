@@ -9,7 +9,9 @@ spec:
     algorithm: ECDSA
     size: 256
   usages: [server auth]
-  dnsNames: ["apiserver.play-cluster.svc.cluster.local"]
+  dnsNames:
+  - apiserver.play-cluster.svc.cluster.local
+  - apiserver
   issuerRef:
     name: kubernetes-ca-issuer
     kind: Issuer
@@ -37,6 +39,8 @@ spec:
         name: kube-apiserver
         command:
         - kube-apiserver
+        - --authorization-mode=Node,RBAC
+        - --client-ca-file=/opt/certs/apiserver/ca.crt
         - --etcd-cafile=/opt/certs/etcd-client/ca.crt
         - --etcd-certfile=/opt/certs/etcd-client/tls.crt
         - --etcd-compaction-interval=0
@@ -65,3 +69,18 @@ spec:
       - name: sa
         secret:
           secretName: sa
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: apiserver
+  name: apiserver
+  namespace: play-cluster
+spec:
+  ports:
+  - port: 6443
+    protocol: TCP
+    targetPort: 6443
+  selector:
+    app: apiserver
