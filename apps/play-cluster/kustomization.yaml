@@ -1,6 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 configMapGenerator:
+- name: egress-selector-config
+  files: [egress-selector-config.yaml]
+  namespace: play-cluster
 - name: kubeconfig-template
   files: [kubeconfig=kubeconfig-template]
   namespace: play-cluster
@@ -10,6 +13,8 @@ resources:
 - controller-manager.yaml
 - front-proxy-pki.yaml
 - generate-sa.yaml
+- konnectivity-pki.yaml
+- konnectivity-server.yaml
 - namespace.yaml
 - pki.yaml
 - scheduler.yaml

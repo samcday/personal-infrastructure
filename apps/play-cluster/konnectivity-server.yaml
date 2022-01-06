@@ -1,0 +1,94 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: konnectivity-server-client
+  namespace: play-cluster
+spec:
+  secretName: konnectivity-server-client-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [client auth]
+  commonName: system:konnectivity-server
+  issuerRef:
+    name: kubernetes-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: konnectivity-server
+  name: konnectivity-server
+  namespace: play-cluster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: konnectivity-server
+  template:
+    metadata:
+      labels:
+        app: konnectivity-server
+    spec:
+      containers:
+      - image: us.gcr.io/k8s-artifacts-prod/kas-network-proxy/proxy-server:v0.0.27
+        name: proxy-server
+        command:
+        - /proxy-server
+        - --agent-namespace=kube-system
+        - --agent-service-account=konnectivity-agent
+        - --authentication-audience=system:konnectivity-server
+        # - --cluster-ca-cert=/opt/certs/konnectivity-server-agent/ca.crt
+        - --cluster-cert=/opt/certs/konnectivity-server-agent/tls.crt
+        - --cluster-key=/opt/certs/konnectivity-server-agent/tls.key
+        - --kubeconfig=/opt/kubeconfig/kubeconfig
+        - --mode=http-connect
+        - --server-ca-cert=/opt/certs/konnectivity-server-apiserver/ca.crt
+        - --server-cert=/opt/certs/konnectivity-server-apiserver/tls.crt
+        - --server-key=/opt/certs/konnectivity-server-apiserver/tls.key
+        ports:
+        - containerPort: 8091
+          name: agent
+        - containerPort: 8090
+          name: server
+        volumeMounts:
+        - mountPath: /opt/cert
+          name: konnectivity-server-agent-cert
+        - mountPath: /opt/certs/konnectivity-server-agent
+          name: konnectivity-server-apiserver-cert
+        - mountPath: /opt/certs/konnectivity-server-apiserver
+          name: konnectivity-server-apiserver-cert
+        - mountPath: /opt/kubeconfig
+          name: kubeconfig-template
+      volumes:
+      - name: konnectivity-server-agent-cert
+        secret:
+          secretName: konnectivity-server-agent-cert
+      - name: konnectivity-server-apiserver-cert
+        secret:
+          secretName: konnectivity-server-apiserver-cert
+      - name: kubeconfig-template
+        configMap:
+          name: kubeconfig-template
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: konnectivity-server
+  name: konnectivity-server
+  namespace: play-cluster
+spec:
+  ports:
+  - name: server
+    port: 8090
+    protocol: TCP
+    targetPort: server
+  - name: agent
+    port: 8091
+    protocol: TCP
+    targetPort: agent
+  selector:
+    app: konnectivity-server

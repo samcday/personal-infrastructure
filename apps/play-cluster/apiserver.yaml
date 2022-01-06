@@ -41,6 +41,7 @@ spec:
         - kube-apiserver
         - --authorization-mode=Node,RBAC
         - --client-ca-file=/opt/certs/apiserver/ca.crt
+        - --egress-selector-config-file=/opt/esc/egress-selector-config.yaml
         - --etcd-cafile=/opt/certs/etcd-client/ca.crt
         - --etcd-certfile=/opt/certs/etcd-client/tls.crt
         - --etcd-compaction-interval=0
@@ -59,6 +60,10 @@ spec:
         volumeMounts:
         - mountPath: /opt/certs/apiserver
           name: apiserver-cert
+        - mountPath: /opt/certs/apiserver-konnectivity
+          name: apiserver-konnectivity-cert
+        - mountPath: /opt/esc
+          name: egress-selector-config
         - mountPath: /opt/certs/etcd-client
           name: etcd-client-cert
         - mountPath: /opt/certs/front-proxy-client
@@ -69,6 +74,12 @@ spec:
       - name: apiserver-cert
         secret:
           secretName: apiserver-cert
+      - name: apiserver-konnectivity-cert
+        secret:
+          secretName: apiserver-konnectivity-cert
+      - name: egress-selector-config
+        configMap:
+          name: egress-selector-config
       - name: etcd-client-cert
         secret:
           secretName: apiserver-etcd

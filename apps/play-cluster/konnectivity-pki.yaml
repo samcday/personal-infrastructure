@@ -1,0 +1,121 @@
+# CA + server + client certs to secure konnectivity-agent <-> konnectivity-server
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: konnectivity-server-agent-ca
+  namespace: play-cluster
+spec:
+  isCA: true
+  commonName: konnectivity-server-agent-ca
+  secretName: konnectivity-server-agent-ca-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: konnectivity-server-agent-ca-issuer
+  namespace: play-cluster
+spec:
+  ca:
+    secretName: konnectivity-server-agent-ca-cert
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: konnectivity-server-agent
+  namespace: play-cluster
+spec:
+  secretName: konnectivity-server-agent-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [server auth]
+  dnsNames: [konnectivity.play-cluster.samcday.com]
+  issuerRef:
+    name: konnectivity-server-agent-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: konnectivity-agent
+  namespace: play-cluster
+spec:
+  secretName: konnectivity-agent-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [client auth]
+  commonName: konnectivity-agent
+  issuerRef:
+    name: konnectivity-server-agent-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+# CA + client + server certs to secure kube-apiserver <-> konnectivity-server
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: konnectivity-server-apiserver-ca
+  namespace: play-cluster
+spec:
+  isCA: true
+  commonName: konnectivity-server-apiserver-ca
+  secretName: konnectivity-server-apiserver-ca-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: konnectivity-server-apiserver-ca-issuer
+  namespace: play-cluster
+spec:
+  ca:
+    secretName: konnectivity-server-apiserver-ca-cert
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: konnectivity-server-apiserver
+  namespace: play-cluster
+spec:
+  secretName: konnectivity-server-apiserver-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [server auth]
+  dnsNames: [konnectivity-server]
+  issuerRef:
+    name: konnectivity-server-apiserver-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: apiserver-konnectivity
+  namespace: play-cluster
+spec:
+  secretName: apiserver-konnectivity-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [client auth]
+  commonName: apiserver
+  issuerRef:
+    name: konnectivity-server-agent-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
