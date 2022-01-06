@@ -1,0 +1,42 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: front-proxy-ca
+  namespace: play-cluster
+spec:
+  isCA: true
+  commonName: front-proxy-ca
+  secretName: front-proxy-ca
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: front-proxy-ca-issuer
+  namespace: play-cluster
+spec:
+  ca:
+    secretName: front-proxy-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: front-proxy-client
+  namespace: play-cluster
+spec:
+  secretName: front-proxy-client-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [client auth]
+  commonName: front-proxy-client
+  issuerRef:
+    name: front-proxy-ca-issuer
+    kind: Issuer
+    group: cert-manager.io

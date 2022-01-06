@@ -1,0 +1,62 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: controller-manager
+  namespace: play-cluster
+spec:
+  secretName: controller-manager-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages: [client auth]
+  commonName: system:kube-controller-manager
+  issuerRef:
+    name: kubernetes-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: controller-manager
+  name: controller-manager
+  namespace: play-cluster
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: controller-manager
+  template:
+    metadata:
+      labels:
+        app: controller-manager
+    spec:
+      containers:
+      - image: k8s.gcr.io/kube-controller-manager:v1.21.8
+        name: kube-controller-manager
+        command:
+        - kube-controller-manager
+        - --authentication-kubeconfig=/opt/kubeconfig/kubeconfig
+        - --authorization-kubeconfig=/opt/kubeconfig/kubeconfig
+        - --kubeconfig=/opt/kubeconfig/kubeconfig
+        - --port=0
+        - --service-account-private-key-file=/opt/sa/key
+        - --use-service-account-credentials=true
+        volumeMounts:
+        - mountPath: /opt/cert
+          name: cert
+        - mountPath: /opt/kubeconfig
+          name: kubeconfig-template
+        - mountPath: /opt/sa
+          name: sa
+      volumes:
+      - name: cert
+        secret:
+          secretName: controller-manager-cert
+      - name: kubeconfig-template
+        configMap:
+          name: kubeconfig-template
+      - name: sa
+        secret:
+          secretName: sa

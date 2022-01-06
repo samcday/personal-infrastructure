@@ -47,6 +47,10 @@ spec:
         - --etcd-keyfile=/opt/certs/etcd-client/tls.key
         - --etcd-prefix=/play-cluster
         - --etcd-servers=https://etcd.etcd.svc.cluster.local:2379
+        - --proxy-client-cert-file=/opt/certs/front-proxy-client/tls.crt
+        - --proxy-client-key-file=/opt/certs/front-proxy-client/tls.key
+        - --requestheader-allowed-names=front-proxy-client
+        - --requestheader-client-ca-file=/opt/certs/front-proxy-client/ca.crt
         - --service-account-issuer=https://apiserver.play-cluster.svc.cluster.local
         - --service-account-key-file=/opt/sa/pub
         - --service-account-signing-key-file=/opt/sa/key
@@ -54,18 +58,23 @@ spec:
         - --tls-private-key-file=/opt/certs/apiserver/tls.key
         volumeMounts:
         - mountPath: /opt/certs/apiserver
-          name: apiserver
+          name: apiserver-cert
         - mountPath: /opt/certs/etcd-client
-          name: etcd-client
+          name: etcd-client-cert
+        - mountPath: /opt/certs/front-proxy-client
+          name: front-proxy-client-cert
         - mountPath: opt/sa
           name: sa
       volumes:
-      - name: apiserver
+      - name: apiserver-cert
         secret:
           secretName: apiserver-cert
-      - name: etcd-client
+      - name: etcd-client-cert
         secret:
           secretName: apiserver-etcd
+      - name: front-proxy-client-cert
+        secret:
+          secretName: front-proxy-client-cert
       - name: sa
         secret:
           secretName: sa
