@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kubeadm-init
+  namespace: play-cluster
+spec:
+  template:
+    spec:
+      containers:
+      - name: kubectl
+        command:
+        - /bin/bash
+        - -c
+        - |-
+          set -uexo pipefail
+          wget -O /tmp/kubeadm https://storage.googleapis.com/kubernetes-release/release/v1.21.8/bin/linux/amd64/kubeadm && chmod +x /tmp/kubeadm
+          /tmp/kubeadm init phase upload-config kubeadm --config=/opt/kubeadm/kubeadm-config.yaml --kubeconfig=/opt/admin/admin.conf
+        image: bitnami/kubectl:1.21.8
+        volumeMounts:
+        - mountPath: /opt/admin
+          name: admin-kubeconfig
+        - mountPath: /opt/kubeadm
+          name: kubeadm-config
+      restartPolicy: OnFailure
+      volumes:
+      - name: admin-kubeconfig
+        secret:
+          secretName: admin-kubeconfig
+      - name: kubeadm-config
+        configMap:
+          name: kubeadm-config

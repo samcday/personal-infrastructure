@@ -4,6 +4,9 @@ configMapGenerator:
 - name: egress-selector-config
   files: [egress-selector-config.yaml]
   namespace: play-cluster
+- name: kubeadm-config
+  files: [kubeadm-config.yaml]
+  namespace: play-cluster
 - name: kubeconfig-template
   files: [kubeconfig=kubeconfig-template]
   namespace: play-cluster
@@ -12,9 +15,11 @@ resources:
 - apiserver.yaml
 - controller-manager.yaml
 - front-proxy-pki.yaml
+- generate-admin-kubeconfig.yaml
 - generate-sa.yaml
 - konnectivity-pki.yaml
 - konnectivity-server.yaml
+- kubeadm-init.yaml
 - namespace.yaml
 - pki.yaml
 - scheduler.yaml

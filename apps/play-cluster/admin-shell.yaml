@@ -6,23 +6,22 @@ metadata:
 spec:
   containers:
   - command:
-    - sleep
-    - infinity
+    - bash
+    - -c
+    - |-
+      wget -O /tmp/kubeadm https://storage.googleapis.com/kubernetes-release/release/v1.21.8/bin/linux/amd64/kubeadm && chmod +x /tmp/kubeadm
+      sleep infinity
     env:
     - name: KUBECONFIG
-      value: /opt/kubeconfig/kubeconfig
+      value: /etc/kubernetes/admin.conf
     image: bitnami/kubectl:1.21.8
     name: kubectl
     volumeMounts:
-    - mountPath: /opt/cert
-      name: cert
-    - mountPath: /opt/kubeconfig
-      name: kubeconfig-template
+    - mountPath: /etc/kubernetes
+      name: admin-kubeconfig
   restartPolicy: Always
   volumes:
-  - name: cert
+  - name: admin-kubeconfig
     secret:
-      secretName: admin-cert
-  - name: kubeconfig-template
-    configMap:
-      name: kubeconfig-template
+      secretName: admin-kubeconfig
+

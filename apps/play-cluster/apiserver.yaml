@@ -12,6 +12,7 @@ spec:
   dnsNames:
   - apiserver.play-cluster.svc.cluster.local
   - apiserver
+  - apiserver.play-cluster.samcday.com
   issuerRef:
     name: kubernetes-ca-issuer
     kind: Issuer
