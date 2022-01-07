@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ueo pipefail
+set -uexo pipefail
 
 # This script bootstraps a 3 node Kubernetes cluster in Hetzner Cloud.
 # The cluster nodes will be in a private network, fronted by a load balancer, and protected by a firewall.

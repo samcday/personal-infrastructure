@@ -19,9 +19,13 @@ spec:
     volumeMounts:
     - mountPath: /etc/kubernetes
       name: admin-kubeconfig
+    - mountPath: /opt/kubeadm
+      name: kubeadm-config
   restartPolicy: Always
   volumes:
   - name: admin-kubeconfig
     secret:
       secretName: admin-kubeconfig
-
+  - name: kubeadm-config
+    configMap:
+      name: kubeadm-config

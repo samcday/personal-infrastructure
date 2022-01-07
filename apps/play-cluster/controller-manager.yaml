@@ -47,6 +47,7 @@ spec:
         - --controllers=*,bootstrapsigner,tokencleaner
         - --kubeconfig=/opt/kubeconfig/kubeconfig
         - --port=0
+        - --root-ca-file=/opt/ca-cert/tls.crt
         - --service-account-private-key-file=/opt/sa/key
         - --service-cluster-ip-range=10.96.0.0/12
         - --use-service-account-credentials=true

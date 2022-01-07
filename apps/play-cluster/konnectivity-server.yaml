@@ -56,6 +56,8 @@ spec:
         volumeMounts:
         - mountPath: /opt/cert
           name: konnectivity-server-agent-cert
+        # - mountPath: /opt/certs/apiserver
+        #   name: apiserver-cert
         - mountPath: /opt/certs/konnectivity-server-agent
           name: konnectivity-server-apiserver-cert
         - mountPath: /opt/certs/konnectivity-server-apiserver
@@ -63,6 +65,9 @@ spec:
         - mountPath: /opt/kubeconfig
           name: kubeconfig-template
       volumes:
+      # - name: apiserver-cert
+      #   secret:
+      #     secretName: apiserver-cert
       - name: konnectivity-server-agent-cert
         secret:
           secretName: konnectivity-server-agent-cert
