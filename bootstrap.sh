@@ -71,7 +71,7 @@ for port in 80:32080:--proxy-protocol 443:32443:--proxy-protocol 6443:6443:; do
   flags=$(echo $port | cut -d':' -f3)
 
   if [[ -z "$(jq ".services | map(select(.listen_port == $listen_port)) | .[]" < /tmp/lb.json)" ]]; then
-    hcloud load-balancer add-service cluster --destination-port "$dest_port" --listen-port "$listen_port" --protocol tcp "$flags"
+    hcloud load-balancer add-service cluster --destination-port "$dest_port" --listen-port "$listen_port" --protocol tcp $flags
   fi
 done 
 
