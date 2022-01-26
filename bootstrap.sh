@@ -139,6 +139,12 @@ for name in cluster{1..3}; do
       apt-get install -y kubelet=$kube_version-00 kubeadm=$kube_version-00 kubectl=$kube_version-00
       apt-mark hold kubelet kubeadm kubectl
     fi
+    cat > /etc/kubernetes/audit-policy.yaml <<-HERE
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+- level: Metadata
+HERE
 INIT
   echo node $name configured
 done
