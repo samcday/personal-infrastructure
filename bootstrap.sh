@@ -5,32 +5,7 @@ set -uexo pipefail
 # The cluster nodes will be in a private network, fronted by a load balancer, and protected by a firewall.
 # The script is idempotent, it can be run repeatedly until completely successful.
 # This means it can also be used to partially rebuild an existing cluster.
-# This script requires the following tools:
-required_tools=(hcloud jq kubectl cilium flux)
-for command in "${required_tools[@]}"; do
-  if ! command -v "$command" >/dev/null 2>&1; then
-    echo "ERROR: $command not found"
-    exit 1
-  fi
-done
-
-server_type=cx21
-image=ubuntu-20.04
-location=fsn1
-ssh_key=mine
-loadbalancer_type=lb11
-network_cidr=10.96.0.0/14
-pod_cidr=10.98.0.0/15
-service_cidr=10.97.0.0/16
-kube_version=1.21.8
-
-[[ -f .env ]] && source .env
-
-if [[ -z "${HCLOUD_TOKEN:-}" ]]; then
-  echo "HCLOUD_TOKEN not set"
-  exit 1
-fi
-export HCLOUD_TOKEN
+. _setup.sh
 
 # Create a placement group to ensure the 3 nodes are spread across multiple failure zones.
 if ! hcloud placement-group describe cluster >/dev/null 2>&1; then
@@ -118,7 +93,7 @@ done
 echo firewall configured
 
 # Now we're finally ready to bootstrap the nodes proper.
-loadbalancer_ip=$(jq -r .public_net.ipv4.ip < /tmp/lb.json)
+export loadbalancer_ip=$(jq -r .public_net.ipv4.ip < /tmp/lb.json)
 
 for name in cluster{1..3}; do
   if ! hcloud server describe $name -o json >/tmp/server-$name.json 2>/dev/null; then
@@ -182,25 +157,8 @@ if [[ -z "$cluster_master" ]]; then
   # No cluster yet. Run kubeadm init on the first node to create one.
   server_ip=$(jq -r .public_net.ipv4.ip < /tmp/server-cluster1.json)
   private_ip=$(jq -r '.private_net[0].ip' < /tmp/server-cluster1.json)
-  cat > /tmp/kubeadm <<KUBEADM
-apiVersion: kubeadm.k8s.io/v1beta2
-kind: ClusterConfiguration
-clusterName: personal
-controlPlaneEndpoint: $loadbalancer_ip
-networking:
-  serviceSubnet: $service_cidr
-  podSubnet: $pod_cidr
-kubernetesVersion: $kube_version
-controllerManager:
-  extraArgs:
-    bind-address: 0.0.0.0
-scheduler:
-  extraArgs:
-    bind-address: 0.0.0.0
-etcd:
-  local:
-    extraArgs:
-      listen-metrics-urls: http://0.0.0.0:2381
+  ./_generate-kubeadm-config.sh > /tmp/kubeadm
+  cat >> /tmp/kubeadm <<KUBEADM
 ---
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: InitConfiguration
