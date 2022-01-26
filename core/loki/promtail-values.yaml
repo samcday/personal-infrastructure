@@ -1,0 +1,45 @@
+config:
+  lokiAddress: http://loki:3100/loki/api/v1/push
+  snippets:
+    extraScrapeConfigs: |
+      - job_name: kubernetes-audit
+        pipeline_stages:
+        - json:
+            expressions:
+              user: user.username
+              verb: verb
+              uri: requestURI
+              ip: sourceIPs[0]
+              agent: userAgent
+              resource: objectRef.resource
+              namespace: objectRef.namespace
+              name: objectRef.name
+              code: responseStatus.code
+              annotations: annotations
+        - labels:
+            user:
+            verb:
+            uri:
+            ip:
+            agent:
+            resource:
+            namespace:
+            name:
+            code:
+            annotations:
+        static_configs:
+        - targets:
+          - localhost
+          labels:
+            job: audit
+            __path__: /var/log/kubernetes/audit/audit.log
+extraVolumes:
+- name: audit
+  hostPath:
+    path: /var/log/kubernetes/audit
+extraVolumeMounts:
+- name: audit
+  mountPath: /var/log/kubernetes/audit
+  readOnly: true
+serviceMonitor:
+  enabled: true
