@@ -1,9 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: mautrix-signal
+  namespace: synapse
   labels:
     app: mautrix-signal
-  name: mautrix-signal
 spec:
   replicas: 1
   selector:
@@ -13,12 +14,21 @@ spec:
     type: Recreate
   template:
     metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
         app: mautrix-signal
     spec:
       containers:
       - image: signald/signald:0.15.0-40-56a6c9d2
         name: signald
+        resources:
+          requests:
+            cpu: 50m
+            memory: 96Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
         volumeMounts:
         - name: signald
           mountPath: /signald
@@ -26,7 +36,13 @@ spec:
         name: mautrix-signal
         ports:
         - containerPort: 29328
-        env:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 1
+            memory: 128Mi
         volumeMounts:
         - name: data
           mountPath: /data

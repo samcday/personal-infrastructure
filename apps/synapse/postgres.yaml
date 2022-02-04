@@ -2,6 +2,7 @@ apiVersion: acid.zalan.do/v1
 kind: postgresql
 metadata:
   name: synapse-db
+  namespace: synapse
 spec:
   teamId: synapse
   volume:
@@ -25,3 +26,10 @@ spec:
       encoding: UTF8
       locale: C
   enableLogicalBackup: false
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi

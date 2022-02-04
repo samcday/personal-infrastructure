@@ -1,9 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: synapse
+  namespace: synapse
   labels:
     app: synapse
-  name: synapse
 spec:
   replicas: 1
   selector:
@@ -13,6 +14,8 @@ spec:
     type: Recreate
   template:
     metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
         app: synapse
     spec:
@@ -106,6 +109,13 @@ spec:
             secretKeyRef:
               name: synapse
               key: TELE_SENDER_LOCALPART
+        resources:
+          requests:
+            cpu: 50m
+            memory: 160Mi
+          limits:
+            cpu: 1
+            memory: 160Mi
         volumeMounts:
         - name: config-template
           mountPath: /config-template

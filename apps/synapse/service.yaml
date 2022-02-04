@@ -1,11 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  creationTimestamp: null
-  labels:
-    app: synapse
   name: synapse
   namespace: synapse
+  labels:
+    app: synapse
 spec:
   ports:
   - port: 8008
@@ -13,5 +12,3 @@ spec:
     targetPort: 8008
   selector:
     app: synapse
-status:
-  loadBalancer: {}

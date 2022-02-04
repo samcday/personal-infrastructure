@@ -1,6 +1,26 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: synapse
+configMapGenerator:
+- name: homeserver
+  namespace: synapse
+  files:
+  - config/appservice-mautrix-signal.yaml
+  - config/appservice-mautrix-telegram.yaml
+  - config/appservice-mautrix-whatsapp.yaml
+  - config/homeserver.yaml
+  - config/log.yaml
+- name: mautrix-signal
+  namespace: synapse
+  files:
+  - config/mautrix-signal.yaml
+- name: mautrix-telegram
+  namespace: synapse
+  files:
+  - config/mautrix-telegram.yaml
+- name: mautrix-whatsapp
+  namespace: synapse
+  files:
+  - config/mautrix-whatsapp.yaml
 resources:
 - certificate.yaml
 - deployment.yaml
@@ -14,21 +34,4 @@ resources:
 - postgres-exporter.yaml
 - secrets.yaml
 - service.yaml
-configMapGenerator:
-- files:
-  - config/appservice-mautrix-signal.yaml
-  - config/appservice-mautrix-telegram.yaml
-  - config/appservice-mautrix-whatsapp.yaml
-  - config/homeserver.yaml
-  - config/log.yaml
-  name: homeserver
-- files:
-  - config/mautrix-signal.yaml
-  name: mautrix-signal
-- files:
-  - config/mautrix-telegram.yaml
-  name: mautrix-telegram
-
-- files:
-  - config/mautrix-whatsapp.yaml
-  name: mautrix-whatsapp
+- vpa.yaml
