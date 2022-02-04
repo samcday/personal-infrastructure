@@ -39,4 +39,14 @@ spec:
     prometheus:
       prometheusSpec:
         podMonitorSelectorNilUsesHelmValues: false
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1536Mi
+          requests:
+            cpu: 500m
+            memory: 1536Mi
+        retention: 30d
+        retentionSize: 30GB
         serviceMonitorSelectorNilUsesHelmValues: false
+        walCompression: true
