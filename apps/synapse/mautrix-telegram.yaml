@@ -91,9 +91,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: mautrix-telegram
+  namespace: synapse
   labels:
     app: mautrix-telegram
-  name: mautrix-telegram
 spec:
   ports:
   - port: 29317

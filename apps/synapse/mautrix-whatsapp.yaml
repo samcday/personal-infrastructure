@@ -74,9 +74,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: mautrix-whatsapp
+  namespace: synapse
   labels:
     app: mautrix-whatsapp
-  name: mautrix-whatsapp
 spec:
   ports:
   - port: 29318

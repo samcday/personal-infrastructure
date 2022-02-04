@@ -96,9 +96,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: mautrix-signal
+  namespace: synapse
   labels:
     app: mautrix-signal
-  name: mautrix-signal
 spec:
   ports:
   - port: 29328
