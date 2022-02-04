@@ -22,22 +22,26 @@ spec:
         env:
         - name: INVIDIOUS_CONFIG_FILE
           value: /config/config.yaml
-        # Stats endpoint is cheap, check it often for readiness check.
         readinessProbe:
           httpGet:
             path: /api/v1/stats
             port: 3000
           periodSeconds: 5
-        # Check connectivity to Youtube less frequently for liveness check.
         livenessProbe:
           httpGet:
-            path: /api/v1/comments/jNQXAC9IVRw
+            path: /api/v1/stats
             port: 3000
-          initialDelaySeconds: 15
-          periodSeconds: 60
+          periodSeconds: 5
           failureThreshold: 2
         ports:
         - containerPort: 3000
+        resources:
+          requests:
+            cpu: 50m
+            memory: 192Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
         volumeMounts:
         - name: config
           mountPath: /config
@@ -66,6 +70,13 @@ spec:
             secretKeyRef:
               name: invidious
               key: hmac
+        resources:
+          requests:
+            cpu: 1
+            memory: 32Mi
+          limits:
+            cpu: 1
+            memory: 32Mi
         volumeMounts:
         - name: config-template
           mountPath: /config-template
