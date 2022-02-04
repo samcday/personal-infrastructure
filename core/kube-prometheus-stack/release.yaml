@@ -51,9 +51,10 @@ spec:
         serviceMonitorSelectorNilUsesHelmValues: false
         storageSpec:
           volumeClaimTemplate:
-            storageClassName: hcloud-volumes
-            accessModes: [ReadWriteOnce]
-            resources:
-              requests:
-                storage: 50Gi
+            spec:
+              storageClassName: hcloud-volumes
+              accessModes: [ReadWriteOnce]
+              resources:
+                requests:
+                  storage: 50Gi
         walCompression: true
