@@ -17,9 +17,6 @@ spec:
   releaseName: synapse-postgres-exporter
   targetNamespace: synapse
   values:
-    serviceMonitor:
-      enabled: true
-      namespace: synapse
     config:
       datasource:
         host: synapse-db
@@ -27,3 +24,13 @@ spec:
           name: postgres.synapse-db.credentials.postgresql.acid.zalan.do
           key: password
         sslmode: require
+    resources:
+      requests:
+        cpu: 10m
+        memory: 16Mi
+      limits:
+        cpu: 50m
+        memory: 32Mi
+    serviceMonitor:
+      enabled: true
+      namespace: synapse
