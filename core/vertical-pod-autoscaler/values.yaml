@@ -2,23 +2,23 @@ admissionController:
   resources:
     limits:
       cpu: 50m
-      memory: 32m
+      memory: 32Mi
     requests:
       cpu: 50m
-      memory: 32m
+      memory: 32Mi
 recommender:
   resources:
     limits:
       cpu: 50m
-      memory: 32m
+      memory: 32Mi
     requests:
       cpu: 50m
-      memory: 32m
+      memory: 32Mi
 updater:
   resources:
     limits:
       cpu: 50m
-      memory: 32m
+      memory: 32Mi
     requests:
       cpu: 50m
-      memory: 32m
+      memory: 32Mi
