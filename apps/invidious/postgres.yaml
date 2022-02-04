@@ -2,6 +2,7 @@ apiVersion: acid.zalan.do/v1
 kind: postgresql
 metadata:
   name: invidious-db
+  namespace: invidious
 spec:
   teamId: invidious
   volume:

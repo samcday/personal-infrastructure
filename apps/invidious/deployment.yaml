@@ -4,6 +4,7 @@ metadata:
   labels:
     app: invidious
   name: invidious
+  namespace: invidious
 spec:
   replicas: 2
   selector:
