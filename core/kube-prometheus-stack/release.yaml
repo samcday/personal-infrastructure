@@ -49,4 +49,11 @@ spec:
         retention: 30d
         retentionSize: 30GB
         serviceMonitorSelectorNilUsesHelmValues: false
+        storageSpec:
+          volumeClaimTemplate:
+            storageClassName: hcloud-volumes
+            accessModes: [ReadWriteOnce]
+            resources:
+              requests:
+                storage: 50Gi
         walCompression: true
