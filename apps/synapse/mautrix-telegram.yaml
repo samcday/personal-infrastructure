@@ -37,12 +37,11 @@ spec:
             memory: 64Mi
       initContainers:
       - name: config
-        image: alpine:3.15.0
+        image: supinf/envsubst
         command:
         - sh
         - -c
         - |-
-          apk add gettext
           envsubst < /config-template/mautrix-telegram.yaml > /data/config.yaml
           touch /data/registration.yaml
         env:
