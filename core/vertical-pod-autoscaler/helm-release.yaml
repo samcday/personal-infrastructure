@@ -1,0 +1,23 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: vertical-pod-autoscaler
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: vertical-pod-autoscaler
+      sourceRef:
+        kind: HelmRepository
+        name: cowboysysop
+      version: 4.0.2
+  install:
+    createNamespace: true
+  interval: 30m0s
+  releaseName: vertical-pod-autoscaler
+  targetNamespace: vertical-pod-autoscaler
+  valuesFrom:
+  - kind: ConfigMap
+    name: vertical-pod-autoscaler-values
+
