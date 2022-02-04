@@ -23,3 +23,16 @@ spec:
     name: invidious
   updatePolicy:
     updateMode: Auto
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: postgres-exporter
+  namespace: invidious
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: invidious-postgres-exporter-prometheus-postgres-exporter
+  updatePolicy:
+    updateMode: Auto
