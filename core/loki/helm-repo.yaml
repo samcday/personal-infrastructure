@@ -5,6 +5,5 @@ metadata:
   name: grafana
   namespace: flux-system
 spec:
-  interval: 30m0s
+  interval: 1d
   url: https://grafana.github.io/helm-charts
-

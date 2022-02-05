@@ -1,0 +1,22 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: loki
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+      version: 2.8.4
+  install:
+    createNamespace: true
+  interval: 30m0s
+  releaseName: loki
+  targetNamespace: monitoring
+  valuesFrom:
+  - kind: ConfigMap
+    name: loki-values

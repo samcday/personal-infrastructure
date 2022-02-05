@@ -1,12 +1,16 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+configurations:
+- ../../kustomizeconfig.yaml
 configMapGenerator:
+- name: loki-values
+  namespace: flux-system
+  files: [values.yaml=loki-values.yaml]
 - name: promtail-values
   namespace: flux-system
   files: [values.yaml=promtail-values.yaml]
-  options:
-    disableNameSuffixHash: true
 resources:
-- loki.yaml
-- promtail.yaml
-- repository.yaml
+- helm-repo.yaml
+- loki-helm-release.yaml
+- loki-datasource.yaml
+- promtail-helm-release.yaml
