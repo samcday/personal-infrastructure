@@ -21,8 +21,8 @@ if ! hcloud network describe cluster -o json >/tmp/network.json 2>/dev/null; the
 fi
 
 # Subnets in Hetzner Cloud are not yet feature complete, so we just create one spanning the whole network.
-if [[ -z "$(jq ".subnets | map(select(.ip_range == \"$network_cidr\")) | .[]" < /tmp/network.json)" ]]; then
-  hcloud network add-subnet cluster --ip-range $network_cidr --network-zone eu-central --type cloud
+if [[ -z "$(jq ".subnets | map(select(.ip_range == \"$subnet_cidr\")) | .[]" < /tmp/network.json)" ]]; then
+  hcloud network add-subnet cluster --ip-range $subnet_cidr --network-zone eu-central --type cloud
 fi
 
 echo network configured
@@ -250,12 +250,19 @@ hcloud firewall delete-rule cluster --direction=in --protocol=tcp --source-ips=0
 kube_ctx="--context=personal-admin@personal"
 kubectl="kubectl $kube_ctx"
 
-# CNI plugin, this cluster uses Cilium because eBPF is Web Scale apparently.
-if ! $kubectl -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
-  cilium install $kube_ctx --encryption=wireguard
+# Bootstrap Cilium
+if ! helm --kube-context=personal-admin@personal -n kube-system status cilium >/dev/null 2>&1; then
+  helm repo add cilium https://helm.cilium.io/
+  helm repo update cilium
+  helm --kube-context=personal-admin@personal -n kube-system cilium cilium/cilium --version=v1.11.1 --values core/cilium/values.yaml
 fi
 
-echo cilium installed
+# # CNI plugin, this cluster uses Cilium because eBPF is Web Scale apparently.
+# if ! $kubectl -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
+#   cilium install $kube_ctx --encryption=wireguard
+# fi
+
+# echo cilium installed
 
 # We'll stuff the HCLOUD_TOKEN we've been using all this time into the cluster as well.
 # The cluster autoscaler, hcloud CSI driver and CCM all need it.
