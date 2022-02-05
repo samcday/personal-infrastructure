@@ -17,3 +17,6 @@ spec:
   interval: 1h
   releaseName: flux
   targetNamespace: flux-system
+  valuesFrom:
+  - kind: ConfigMap
+    name: flux-values
