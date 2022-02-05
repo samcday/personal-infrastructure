@@ -4,3 +4,4 @@ ipam:
 k8sServiceHost: 49.12.17.240
 k8sServicePort: 6443
 ipv4NativeRoutingCIDR: 10.98.0.0/15
+kubeProxyReplacement: strict
