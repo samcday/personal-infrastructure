@@ -20,5 +20,5 @@ updater:
       cpu: 50m
       memory: 32Mi
     requests:
-      cpu: 50m
+      cpu: 51m
       memory: 32Mi
