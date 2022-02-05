@@ -1,5 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- https://github.com/isindir/sops-secrets-operator/config/crd?ref=0.4.2
+- https://github.com/isindir/sops-secrets-operator/config/crd?ref=0.4.3
 - sops-secrets-operator.yaml
