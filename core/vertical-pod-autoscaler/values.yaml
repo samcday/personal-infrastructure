@@ -17,7 +17,7 @@ recommender:
 updater:
   resources:
     limits:
-      cpu: 50m
+      cpu: 51m
       memory: 32Mi
     requests:
       cpu: 50m
