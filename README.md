@@ -12,4 +12,15 @@ An extremely sophisticated Web Scale task runner (Bash) is used to:
  * Connect all servers to the cluster with `kubeadm join`
  * Install [Cilium](https://cilium.io/) and [Flux2](https://fluxcd.io)
 
-From here, Kubernetes takes over and everything becomes a nail.
+From here, Kubernetes + Flux takes over and everything becomes a nail.
+
+## Flux bootstrapping
+
+Flux manages all resources in the created cluster. It also manages itself. This will probably prove to be a bad idea.
+
+Bootstrapping from scratch should be simple, though:
+
+```sh
+helm install -n flux-system flux fluxcd-community/flux2 --create-namespace
+kustomize --load-restrictor LoadRestrictionsNone build core/flux | kubectl apply -f-
+```
