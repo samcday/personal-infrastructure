@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - cert-manager.yaml
 - cluster-autoscaler.yaml
+- flux.yaml
 - hcloud-controller-manager.yaml
 - hcloud-csi-driver.yaml
 - ingress-nginx.yaml
