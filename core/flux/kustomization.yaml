@@ -3,6 +3,9 @@ kind: Kustomization
 configurations:
 - ../../kustomizeconfig.yaml
 configMapGenerator:
+- name: flux-values
+  namespace: flux-system
+  files: [values.yaml]
 - name: flux-sync-values
   namespace: flux-system
   files: [values.yaml=flux-sync-values.yaml]

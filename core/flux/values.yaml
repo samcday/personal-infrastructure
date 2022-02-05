@@ -1,0 +1,17 @@
+cli:
+  tolerations: &tolerations
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
+    operator: Exists
+helmcontroller:
+  tolerations: *tolerations
+imageautomationcontroller:
+  tolerations: *tolerations
+imagereflectorcontroller:
+  tolerations: *tolerations
+kustomizecontroller:
+  tolerations: *tolerations
+notificationcontroller:
+  tolerations: *tolerations
+sourcecontroller:
+  tolerations: *tolerations
