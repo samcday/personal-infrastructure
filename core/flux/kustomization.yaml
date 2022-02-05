@@ -10,3 +10,5 @@ resources:
 - flux-sync.yaml
 - helm-release.yaml
 - helm-repo.yaml
+- receiver.yaml
+- webhook-ingress.yaml
