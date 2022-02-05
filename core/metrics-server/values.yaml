@@ -1,0 +1,5 @@
+args:
+- --kubelet-insecure-tls
+tolerations:
+- key: node-role.kubernetes.io/master
+  operator: Exists
