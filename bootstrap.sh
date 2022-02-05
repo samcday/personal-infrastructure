@@ -166,7 +166,7 @@ if [[ -z "$cluster_master" ]]; then
   ./_generate-kubeadm-config.sh > /tmp/kubeadm
   cat >> /tmp/kubeadm <<KUBEADM
 ---
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: kubeadm.k8s.io/v1beta3
 kind: InitConfiguration
 localAPIEndpoint:
   advertiseAddress: $private_ip
@@ -174,6 +174,8 @@ nodeRegistration:
   kubeletExtraArgs:
     node-ip: $private_ip
     cloud-provider: external
+skipPhases:
+- add/kube-proxy
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
