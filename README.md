@@ -14,11 +14,11 @@ An extremely sophisticated Web Scale task runner (Bash) is used to:
 
 From here, Kubernetes + Flux takes over and everything becomes a nail.
 
-## Flux bootstrapping
+### Flux bootstrapping
 
 Flux manages all resources in the created cluster. It also manages itself. This will probably prove to be a bad idea.
 
-Bootstrapping from scratch should be simple, though:
+The initial bootstrapping of Flux before Flux is installed on the cluster is simple, and performed by `bootstrap.sh`:
 
 ```sh
 helm install -n flux-system flux fluxcd-community/flux2 --create-namespace

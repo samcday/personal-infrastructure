@@ -273,23 +273,10 @@ $kubectl -n kube-system create secret generic age-key --from-file=age-key.txt=<(
 
 echo cluster secrets configured
 
-# All the manifests are continuously applied with Flux2.
-if ! $kubectl -n flux-system get namespace flux-system >/dev/null 2>&1; then
-  flux install $kube_ctx --toleration-keys=node-role.kubernetes.io/master
-fi
-
-if ! $kubectl -n flux-system get gitrepo personal-infrastructure >/dev/null 2>&1; then
-  flux create source git personal-infrastructure \
-    $kube_ctx \
-    --url https://github.com/samcday/personal-infrastructure.git \
-    --branch main
-fi
-
-if ! $kubectl -n flux-system get kustomization personal-infrastructure >/dev/null 2>&1; then
-  flux create kustomization personal-infrastructure \
-    $kube_ctx \
-    --source personal-infrastructure \
-    --path .
+if ! helm --kube-context=personal-admin@personal -n flux-system status flux >/dev/null 2>&1; then
+  helm repo add fluxcd-community https://fluxcd-community.github.io/helm-charts
+  helm repo update fluxcd-community
+  helm --kube-context=personal-admin@personal -n flux-system flux fluxcd-community/flux2 --values core/flux/values.yaml --create-namespace
 fi
 
 echo flux configured

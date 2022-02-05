@@ -1,6 +1,6 @@
 #!/bin/bash
 
-required_tools=(hcloud jq kubectl cilium flux)
+required_tools=(hcloud jq kubectl cilium flux helm)
 for command in "${required_tools[@]}"; do
   if ! command -v "$command" >/dev/null 2>&1; then
     echo "ERROR: $command not found"
