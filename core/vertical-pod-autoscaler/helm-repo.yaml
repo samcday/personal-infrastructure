@@ -5,6 +5,6 @@ metadata:
   name: cowboysysop
   namespace: flux-system
 spec:
-  interval: 24h0m0s
+  interval: 24h
   url: https://cowboysysop.github.io/charts/
 

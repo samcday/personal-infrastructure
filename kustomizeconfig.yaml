@@ -1,0 +1,8 @@
+# This file is symlinked into every kustomize base that deploys a HelmRelease. Quite gross, but better than the
+# alternatives: copy the file everywhere or disable load restrictor in every kustomize call.
+nameReference:
+- kind: ConfigMap
+  version: v1
+  fieldSpecs:
+  - path: spec/valuesFrom/name
+    kind: HelmRelease

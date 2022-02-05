@@ -14,7 +14,7 @@ spec:
       version: 4.0.2
   install:
     createNamespace: true
-  interval: 30m0s
+  interval: 1h
   releaseName: vertical-pod-autoscaler
   targetNamespace: vertical-pod-autoscaler
   valuesFrom:
