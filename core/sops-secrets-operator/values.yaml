@@ -1,0 +1,7 @@
+extraEnv:
+- name: SOPS_AGE_KEY_FILE
+  value: /age-key/age-key.txt
+secretsAsFiles:
+- name: age-key
+  mountPath: /age-key
+  secretName: age-key
