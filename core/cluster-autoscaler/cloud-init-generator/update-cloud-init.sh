@@ -2,7 +2,7 @@
 set -uexo pipefail
 
 # This script runs hourly via a privleged CronJob in the cluster. It synthesizes a valid cloud-init script that
-# cluster-autoscaler can use to scale up new workers. The bootstrap token is valid for 2 hours to ensure rotations
+# cluster-autoscaler can use to scale up new workers. The bootstrap token is valid for 48 hours to ensure rotations
 # don't interfere with a scale-up that happens at the same time.
 
 # The HCLOUD_TOKEN token from the cluster is stuffed into the cloud-init because I couldn't be fucked facerolling
@@ -24,7 +24,7 @@ KUBECONFIG=kubeconfig kubectl config set-cluster cluster --server=https://kubern
 KUBECONFIG=kubeconfig kubectl config set-credentials user --token="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 KUBECONFIG=kubeconfig kubectl config set-context default --user=user --cluster=cluster
 KUBECONFIG=kubeconfig kubectl config use-context default
-token=$(KUBECONFIG=kubeconfig kubeadm token create --ttl 2h)
+token=$(KUBECONFIG=kubeconfig kubeadm token create --ttl 48h)
 
 (base64 - > init) <<INIT
 #!/bin/bash
