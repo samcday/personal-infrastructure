@@ -46,7 +46,7 @@ alertmanager:
         - alertname = Watchdog
         receiver: deadmanssnitch
         group_wait: 0s
-        repeat_interval: 1h
+        repeat_interval: 30m
       - matchers:
         - alertname != Watchdog
         receiver: pagerduty
