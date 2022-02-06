@@ -8,7 +8,6 @@ apiServer:
     audit-log-maxbackup: "1"
     audit-log-maxsize: "5"
     audit-log-path: /var/log/kubernetes/audit/audit.log
-    kubernetes-service-node-port: 31443
   extraVolumes:
   - name: audit-log
     hostPath: /var/log/kubernetes/audit/
