@@ -1,0 +1,40 @@
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: kubeadm-cp-upgrade
+  namespace: system-upgrade
+spec:
+  concurrency: 1
+  nodeSelector:
+    matchExpressions:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+  serviceAccountName: system-upgrade
+  version: '1.23.3'
+  tolerations:
+  - operator: Exists
+  cordon: true
+  upgrade:
+    image: ubuntu:focal
+    args:
+    - bash
+    - -c
+    - |-
+      set -uexo pipefail
+
+      chroot /host bash <<UPGRADE
+      set -uexo pipefail
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update
+      
+      apt-mark unhold kubeadm
+      apt-get install -y kubeadm=${SYSTEM_UPGRADE_PLAN_LATEST_VERSION}-00
+      apt-mark hold kubeadm
+
+      kubeadm upgrade node
+      UPGRADE
+
+      for i in {0..2}; do
+        sleep 3
+        /host/usr/bin/kubectl wait --for=condition=Ready node/${SYSTEM_UPGRADE_NODE_NAME}
+      done
