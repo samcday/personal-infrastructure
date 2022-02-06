@@ -40,7 +40,7 @@ if [[ -z "$(jq ".private_net | map(select(.network == $network_id)) | .[]" < /tm
 fi
 
 # HTTP(S) traffic uses proxy protocol, so that ingress-nginx in the cluster knows where the original request came from.
-for port in 80:32080:--proxy-protocol 443:32443:--proxy-protocol 6443:6443:; do
+for port in 80:32080:--proxy-protocol 443:32443:--proxy-protocol 6443:31443:; do
   listen_port=$(echo $port | cut -d':' -f1)
   dest_port=$(echo $port | cut -d':' -f2)
   flags=$(echo $port | cut -d':' -f3)
