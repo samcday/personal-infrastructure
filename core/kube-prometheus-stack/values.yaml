@@ -39,6 +39,8 @@ prometheus:
               storage: 50Gi
     walCompression: true
 alertmanager:
+  alertmanagerSpec:
+    configSecret: alertmanager-monitoring-kube-prometheus-alertmanager
   config:
     route:
       routes:
