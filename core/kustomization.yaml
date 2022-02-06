@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - cert-manager.yaml
 - cluster-autoscaler.yaml
+- dashboard.yaml
 - flux.yaml
 - flux-receiver.yaml
 - hcloud-controller-manager.yaml
