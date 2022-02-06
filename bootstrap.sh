@@ -120,6 +120,11 @@ for name in cluster{1..3}; do
     set -ueo pipefail
     export DEBIAN_FRONTEND=noninteractive
 
+    if ! command -v etcdctl >/dev/null 2>&1; then
+      apt-get update
+      apt-get install -y etcd-client
+    fi
+
     if ! command -v docker >/dev/null 2>&1; then
       apt-get update
       apt-get install -y ca-certificates curl gnupg lsb-release
