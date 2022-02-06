@@ -15,7 +15,7 @@ export ssh_key=mine
 export loadbalancer_type=lb11
 export network_cidr=10.96.0.0/14
 export subnet_cidr=10.96.0.0/16
-export kube_version=1.21.8
+export kube_version=1.22.6
 
 [[ -f .env ]] && source .env
 
