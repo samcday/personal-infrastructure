@@ -9,4 +9,3 @@ configMapGenerator:
 resources:
 - helm-release.yaml
 - helm-repo.yaml
-- letsencrypt-issuer.yaml
