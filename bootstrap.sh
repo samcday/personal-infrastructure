@@ -270,13 +270,6 @@ if ! helm --kube-context=personal-admin@personal -n kube-system status cilium >/
   helm --kube-context=personal-admin@personal -n kube-system cilium cilium/cilium --version=v1.11.1 --values core/cilium/values.yaml
 fi
 
-# # CNI plugin, this cluster uses Cilium because eBPF is Web Scale apparently.
-# if ! $kubectl -n kube-system get deploy/cilium-operator >/dev/null 2>&1; then
-#   cilium install $kube_ctx --encryption=wireguard
-# fi
-
-# echo cilium installed
-
 # We'll stuff the HCLOUD_TOKEN we've been using all this time into the cluster as well.
 # The cluster autoscaler, hcloud CSI driver and CCM all need it.
 $kubectl -n kube-system create secret generic hcloud --from-literal=HCLOUD_TOKEN=$HCLOUD_TOKEN -o yaml --dry-run=client \
