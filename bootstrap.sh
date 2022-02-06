@@ -125,6 +125,12 @@ for name in cluster{1..3}; do
       apt-get install -y etcd-client
     fi
 
+    if [[ ! -x /usr/local/bin/etcdctl ]]; then
+      cat > /usr/local/bin/etcdctl <<< '#!/bin/bash'
+      cat >> /usr/local/bin/etcdctl <<< 'export ETCDCTL_API=3; exec /usr/bin/etcdctl --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/peer.crt --key /etc/kubernetes/pki/etcd/peer.key "$@"'
+      chmod +x /usr/local/bin/etcdctl
+    fi
+
     if ! command -v docker >/dev/null 2>&1; then
       apt-get update
       apt-get install -y ca-certificates curl gnupg lsb-release
