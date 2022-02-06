@@ -7,6 +7,5 @@ configMapGenerator:
   namespace: flux-system
   files: [values.yaml]
 resources:
-- https://github.com/isindir/sops-secrets-operator/config/crd?ref=0.4.3
 - helm-release.yaml
 - helm-repo.yaml
