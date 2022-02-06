@@ -7,11 +7,11 @@ metadata:
 spec:
   chart:
     spec:
-      chart: charts/postgres-operator
+      chart: postgres-operator
+      version: 1.7.1
       sourceRef:
-        kind: GitRepository
+        kind: HelmRepository
         name: postgres-operator
-        namespace: flux-system
   install:
     createNamespace: true
   interval: 30m
