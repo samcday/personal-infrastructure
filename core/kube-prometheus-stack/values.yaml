@@ -39,6 +39,8 @@ prometheus:
               storage: 50Gi
     walCompression: true
 alertmanager:
+  alertmanagerSpec:
+    useExistingSecret: true
   config:
     route:
       routes:
