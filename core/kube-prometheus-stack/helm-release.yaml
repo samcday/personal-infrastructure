@@ -20,3 +20,11 @@ spec:
   valuesFrom:
   - kind: ConfigMap
     name: kube-prometheus-stack-values
+  - kind: Secret
+    name: kube-prometheus-stack-secrets
+    valuesKey: deadmanssnitch_url
+    targetPath: alertmanager.config.receivers.0.webhook_configs.0.url
+  - kind: Secret
+    name: kube-prometheus-stack-secrets
+    valuesKey: pagerduty_key
+    targetPath: alertmanager.config.receivers.1.pagerduty_configs.0.service_key
