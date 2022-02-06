@@ -41,6 +41,9 @@ prometheus:
               storage: 50Gi
     walCompression: true
 alertmanager:
+  alertmanagerSpec:
+    externalUrl: http://monitoring-kube-prometheus-alertmanager.monitoring.svc.internal.samcday.com
+
   config:
     route:
       routes:
@@ -60,3 +63,6 @@ alertmanager:
       pagerduty_configs:
       - service_key: "" # Set in secrets
     - name: "null"
+prometheus:
+  prometheusSpec:
+    externalUrl: http://monitoring-kube-prometheus-prometheus.monitoring.svc.internal.samcday.com
