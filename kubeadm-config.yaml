@@ -37,7 +37,7 @@ etcd:
 imageRepository: k8s.gcr.io
 kubernetesVersion: ${kube_version}
 networking:
-  dnsDomain: cluster.local
+  dnsDomain: internal.samcday.com
   podSubnet: 10.98.0.0/15
   serviceSubnet: 10.97.0.0/16
 scheduler:
