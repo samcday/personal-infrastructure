@@ -12,7 +12,8 @@ spec:
         kind: HelmRepository
         name: sops-secrets-operator
       version: 0.10.2
-  interval: 30m
+  crds: CreateReplace
+  interval: 1h
   releaseName: sops-secrets-operator
   targetNamespace: kube-system
   valuesFrom:
