@@ -32,6 +32,8 @@ prometheus:
             requests:
               storage: 50Gi
     walCompression: true
+
+alertmanager:
   config:
     route:
       routes:
