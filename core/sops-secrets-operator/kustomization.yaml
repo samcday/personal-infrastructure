@@ -8,4 +8,5 @@ configMapGenerator:
   files: [values.yaml]
 resources:
 - https://github.com/isindir/sops-secrets-operator/config/crd?ref=0.4.3
-- sops-secrets-operator.yaml
+- helm-release.yaml
+- helm-repo.yaml
