@@ -15,6 +15,8 @@ patches:
     - op: replace
       path: /spec/template/spec/containers/0/env
       value:
+      - name: EXTERNAL_DNS_PUBLISH_INTERNAL_SERVICES
+        value: "true"
       - name: EXTERNAL_DNS_PROVIDER
         value: cloudflare
       - name: EXTERNAL_DNS_CLOUDFLARE_PROXIED
