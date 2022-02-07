@@ -11,7 +11,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: sops-secrets-operator
-      version: 0.10.2
+      version: 0.10.3
   crds: CreateReplace
   interval: 1h
   releaseName: sops-secrets-operator
