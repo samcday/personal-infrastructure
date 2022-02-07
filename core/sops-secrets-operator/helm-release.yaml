@@ -12,10 +12,11 @@ spec:
         kind: HelmRepository
         name: sops-secrets-operator
       version: 0.10.3
-  crds: CreateReplace
   interval: 1h
   releaseName: sops-secrets-operator
   targetNamespace: kube-system
+  upgrade:
+    crds: CreateReplace
   valuesFrom:
   - kind: ConfigMap
     name: sops-secrets-operator-values
