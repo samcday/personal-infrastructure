@@ -1,0 +1,25 @@
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  name: juicefs-db
+  namespace: juicefs
+spec:
+  teamId: juicefs
+  volume:
+    size: 10Gi
+    storageClass: openebs-hostpath
+  numberOfInstances: 2
+  users:
+    juicefs: []
+  databases:
+    juicefs: juicefs
+  postgresql:
+    version: "13"
+  enableLogicalBackup: false
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 256Mi

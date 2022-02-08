@@ -1,0 +1,34 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: juicefs
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: juicefs-csi-driver
+      sourceRef:
+        kind: HelmRepository
+        name: juicefs-csi-driver
+      version: 0.8.1
+  install:
+    createNamespace: true
+  interval: 24h
+  releaseName: juicefs
+  targetNamespace: juicefs
+  valuesFrom:
+  - kind: ConfigMap
+    name: juicefs-values
+  - kind: Secret
+    name: juicefs-secrets
+    valuesKey: metaurl
+    targetPath: storageClasses[0].backend.metaurl
+  - kind: Secret
+    name: juicefs-secrets
+    valuesKey: accessKey
+    targetPath: storageClasses[0].backend.accessKey
+  - kind: Secret
+    name: juicefs-secrets
+    valuesKey: secretKey
+    targetPath: storageClasses[0].backend.secretKey
