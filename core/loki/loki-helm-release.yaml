@@ -11,7 +11,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: grafana
-      version: 2.9.1
+      version: 2.9.2
   install:
     createNamespace: true
   interval: 30m0s
