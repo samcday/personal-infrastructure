@@ -10,7 +10,6 @@ resources:
 - hcloud-controller-manager.yaml
 - hcloud-csi-driver.yaml
 - ingress-nginx.yaml
-- juicefs.yaml
 - kube-prometheus-stack.yaml
 - loki.yaml
 - metrics-server.yaml
