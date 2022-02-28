@@ -1,0 +1,12 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: personal-infrastructure
+  namespace: flux-system
+spec:
+  gitImplementation: go-git
+  interval: 5m0s
+  ref:
+    branch: main
+  timeout: 20s
+  url: https://github.com/samcday/personal-infrastructure.git

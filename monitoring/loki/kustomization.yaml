@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+configMapGenerator:
+- name: loki-values
+  namespace: flux-system
+  files: [values.yaml=loki-values.yaml]
+- name: promtail-values
+  namespace: flux-system
+  files: [values.yaml=promtail-values.yaml]
+resources:
+- loki-helm-release.yaml
+- loki-datasource.yaml
+- promtail-helm-release.yaml

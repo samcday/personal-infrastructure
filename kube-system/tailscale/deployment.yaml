@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tailscale
+  name: tailscale
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tailscale
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tailscale
+    spec:
+      containers:
+      - image: tailscale/tailscale
+        name: tailscale
+        command:
+        - /bin/sh
+        - -c
+        - |-
+          tailscaled --state=kube:auth-key --socket=/tmp/tailscaled.sock --tun=userspace-networking &
+          PID=$!
+          tailscale --socket=/tmp/tailscaled.sock up --accept-dns=false --advertise-routes=10.96.0.0/14
+          wait $PID
+      serviceAccountName: tailscale

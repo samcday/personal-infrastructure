@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+resources:
+- github.com/kubernetes-sigs/external-dns/kustomize?tag=v0.10.2
+- namespace.yaml
+- secrets.yaml
+patches:
+- target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: external-dns
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/env
+      value:
+      - name: EXTERNAL_DNS_PUBLISH_INTERNAL_SERVICES
+        value: "true"
+      - name: EXTERNAL_DNS_PROVIDER
+        value: cloudflare
+      - name: EXTERNAL_DNS_CLOUDFLARE_PROXIED
+        value: "true"
+      - name: CF_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare
+            key: token
