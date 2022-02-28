@@ -24,12 +24,6 @@ spec:
           name: postgres.synapse-db.credentials.postgresql.acid.zalan.do
           key: password
         sslmode: require
-    resources:
-      requests:
-        cpu: 10m
-        memory: 16Mi
-      limits:
-        memory: 64Mi
     serviceMonitor:
       enabled: true
       namespace: synapse

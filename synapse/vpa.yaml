@@ -13,7 +13,8 @@ spec:
   resourcePolicy:
     containerPolicies:
     - containerName: "*"
-      controlledResources: [memory]
+      controlledResources: [cpu, memory]
+      controlledValues: RequestsOnly
 ---
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -27,6 +28,11 @@ spec:
     name: synapse
   updatePolicy:
     updateMode: Initial
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "*"
+      controlledResources: [cpu, memory]
+      controlledValues: RequestsOnly
 ---
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -40,6 +46,11 @@ spec:
     name: mautrix-signal
   updatePolicy:
     updateMode: Auto
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "*"
+      controlledResources: [cpu, memory]
+      controlledValues: RequestsOnly
 ---
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -53,6 +64,11 @@ spec:
     name: mautrix-telegram
   updatePolicy:
     updateMode: Auto
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "*"
+      controlledResources: [cpu, memory]
+      controlledValues: RequestsOnly
 ---
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -66,6 +82,11 @@ spec:
     name: mautrix-whatsapp
   updatePolicy:
     updateMode: Auto
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "*"
+      controlledResources: [cpu, memory]
+      controlledValues: RequestsOnly
 ---
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -79,3 +100,8 @@ spec:
     name: synapse-postgres-exporter-prometheus-postgres-exporter
   updatePolicy:
     updateMode: Auto
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "*"
+      controlledResources: [cpu, memory]
+      controlledValues: RequestsOnly

@@ -108,13 +108,6 @@ spec:
             secretKeyRef:
               name: synapse
               key: TELE_SENDER_LOCALPART
-        resources:
-          requests:
-            cpu: 50m
-            memory: 160Mi
-          limits:
-            cpu: 1
-            memory: 160Mi
         volumeMounts:
         - name: config-template
           mountPath: /config-template

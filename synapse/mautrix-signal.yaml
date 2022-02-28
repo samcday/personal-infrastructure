@@ -22,13 +22,6 @@ spec:
       containers:
       - image: signald/signald:0.15.0-40-56a6c9d2
         name: signald
-        resources:
-          requests:
-            cpu: 50m
-            memory: 96Mi
-          limits:
-            cpu: 250m
-            memory: 128Mi
         volumeMounts:
         - name: signald
           mountPath: /signald
@@ -36,13 +29,6 @@ spec:
         name: mautrix-signal
         ports:
         - containerPort: 29328
-        resources:
-          requests:
-            cpu: 50m
-            memory: 64Mi
-          limits:
-            cpu: 1
-            memory: 128Mi
         volumeMounts:
         - name: data
           mountPath: /data
