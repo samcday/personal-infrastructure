@@ -3,3 +3,6 @@ gitRepository:
     ref:
       branch: main
     url: https://github.com/samcday/personal-infrastructure.git
+kustomization:
+  spec:
+    prune: false
