@@ -24,9 +24,11 @@ resources:
 - helmrepos/sops-secrets-operator.yaml
 - kustomizations/cert-manager.yaml
 - kustomizations/flux-system.yaml
+- kustomizations/invidious.yaml
 - kustomizations/kube-system.yaml
 - kustomizations/monitoring.yaml
 - kustomizations/openebs.yaml
+- kustomizations/synapse.yaml
 - limit-range.yaml
 - receiver.yaml
 - webhook-ingress.yaml
