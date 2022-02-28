@@ -26,4 +26,3 @@ resources:
 - kustomizations/monitoring.yaml
 - receiver.yaml
 - webhook-ingress.yaml
-- webhook-token-secret.yaml
