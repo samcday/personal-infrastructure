@@ -1,5 +1,9 @@
 controller:
-  kind: DaemonSet
+  kind: Deployment
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
   config:
     use-proxy-protocol: true
   extraArgs:
