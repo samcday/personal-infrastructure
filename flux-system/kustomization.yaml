@@ -24,5 +24,7 @@ resources:
 - kustomizations/flux-system.yaml
 - kustomizations/kube-system.yaml
 - kustomizations/monitoring.yaml
+- kustomizations/openebs.yaml
+- limit-range.yaml
 - receiver.yaml
 - webhook-ingress.yaml
