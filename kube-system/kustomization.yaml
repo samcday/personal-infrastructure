@@ -3,6 +3,7 @@ kind: Kustomization
 configurations:
 - ../kustomizeconfig.yaml
 resources:
+- cert-manager/
 - cilium/
 - cluster-autoscaler/
 - external-dns/

@@ -16,7 +16,7 @@ spec:
     createNamespace: true
   interval: 1h
   releaseName: cert-manager
-  targetNamespace: cert-manager
+  targetNamespace: kube-system
   valuesFrom:
   - kind: ConfigMap
     name: cert-manager-values

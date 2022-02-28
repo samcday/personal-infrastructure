@@ -2,11 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: issuers
-  namespace: cert-manager
+  name: cert-manager-issuers
+  namespace: kube-system
 spec:
   interval: 15m0s
-  path: ./cert-manager/issuers
+  path: ./kube-system/cert-manager/issuers
   prune: true
   sourceRef:
     kind: GitRepository
