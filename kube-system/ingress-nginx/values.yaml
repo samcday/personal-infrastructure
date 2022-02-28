@@ -4,6 +4,8 @@ controller:
     enabled: true
     minReplicas: 2
     maxReplicas: 4
+    targetCPUUtilizationPercentage: 85
+    targetMemoryUtilizationPercentage: ~
   config:
     use-proxy-protocol: true
   extraArgs:
