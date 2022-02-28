@@ -4,14 +4,32 @@ cli:
     effect: NoSchedule
     operator: Exists
 helmcontroller:
+  resources:
+    requests:
+      cpu: 50m
   tolerations: *tolerations
 imageautomationcontroller:
+  resources:
+    requests:
+      cpu: 10m
   tolerations: *tolerations
 imagereflectorcontroller:
+  resources:
+    requests:
+      cpu: 10m
   tolerations: *tolerations
 kustomizecontroller:
+  resources:
+    requests:
+      cpu: 50m
   tolerations: *tolerations
 notificationcontroller:
+  resources:
+    requests:
+      cpu: 50m
   tolerations: *tolerations
 sourcecontroller:
+  resources:
+    requests:
+      cpu: 50m
   tolerations: *tolerations
