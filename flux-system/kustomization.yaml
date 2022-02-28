@@ -22,7 +22,6 @@ resources:
 - helmrepos/prometheus-community.yaml
 - helmrepos/rook.yaml
 - helmrepos/sops-secrets-operator.yaml
-- kustomizations/cert-manager.yaml
 - kustomizations/flux-system.yaml
 - kustomizations/invidious.yaml
 - kustomizations/kube-system.yaml
