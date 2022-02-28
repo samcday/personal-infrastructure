@@ -68,8 +68,8 @@ spec:
             - "--cluster-cidr=10.98.0.0/15"
           resources:
             requests:
-              cpu: 100m
-              memory: 50Mi
+              cpu: 10m
+              memory: 32Mi
           env:
             - name: NODE_NAME
               valueFrom:

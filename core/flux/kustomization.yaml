@@ -12,5 +12,4 @@ configMapGenerator:
 resources:
 - flux-sync.yaml
 - helm-release.yaml
-- helm-repo.yaml
 - webhook-ingress.yaml

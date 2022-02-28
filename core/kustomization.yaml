@@ -11,6 +11,7 @@ resources:
 - hcloud-csi-driver.yaml
 - ingress-nginx.yaml
 - kube-prometheus-stack.yaml
+- kube-system.yaml
 - loki.yaml
 - metrics-server.yaml
 - openebs.yaml
@@ -18,4 +19,3 @@ resources:
 - sops-secrets-operator.yaml
 - system-upgrade-controller.yaml
 - tailscale.yaml
-- vertical-pod-autoscaler.yaml

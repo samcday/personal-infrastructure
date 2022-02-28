@@ -10,7 +10,6 @@ configMapGenerator:
   namespace: flux-system
   files: [values.yaml=promtail-values.yaml]
 resources:
-- helm-repo.yaml
 - loki-helm-release.yaml
 - loki-datasource.yaml
 - promtail-helm-release.yaml
