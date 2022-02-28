@@ -8,6 +8,7 @@ resources:
 - external-dns/
 - hcloud-controller-manager/
 - hcloud-csi-driver/
+- ingress-nginx/
 - limit-range.yaml
 - metrics-server/
 - postgres-operator/
