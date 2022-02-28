@@ -4,9 +4,6 @@ configMapGenerator:
 - name: loki-values
   namespace: flux-system
   files: [values.yaml]
-- name: promtail-values
-  namespace: flux-system
-  files: [values.yaml]
 resources:
 - helm-release.yaml
 - datasource.yaml
