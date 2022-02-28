@@ -21,6 +21,7 @@ resources:
 - helmrepos/postgres-operator.yaml
 - helmrepos/prometheus-community.yaml
 - helmrepos/sops-secrets-operator.yaml
+- kustomizations/cert-manager.yaml
 - kustomizations/flux-system.yaml
 - kustomizations/kube-system.yaml
 - kustomizations/monitoring.yaml
