@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: kube-system
 resources:
 - github.com/kubernetes-sigs/external-dns/kustomize?tag=v0.10.2
-- namespace.yaml
 - secrets.yaml
 patches:
 - target:
