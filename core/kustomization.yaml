@@ -11,7 +11,6 @@ resources:
 - hcloud-csi-driver.yaml
 - ingress-nginx.yaml
 - kube-prometheus-stack.yaml
-- kube-system.yaml
 - loki.yaml
 - metrics-server.yaml
 - openebs.yaml

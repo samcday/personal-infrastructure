@@ -14,3 +14,4 @@ resources:
 - helmrepos/prometheus-community.yaml
 - helmrepos/sops-secrets-operator.yaml
 - kustomizations/flux-system.yaml
+- kustomizations/kube-system.yaml
