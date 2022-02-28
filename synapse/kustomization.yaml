@@ -25,6 +25,7 @@ resources:
 - certificate.yaml
 - deployment.yaml
 - ingress.yaml
+- limit-range.yaml
 - mautrix-signal.yaml
 - mautrix-telegram.yaml
 - mautrix-whatsapp.yaml

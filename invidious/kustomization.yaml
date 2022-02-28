@@ -8,6 +8,7 @@ resources:
 - certificate.yaml
 - deployment.yaml
 - ingress.yaml
+- limit-range.yaml
 - namespace.yaml
 - postgres.yaml
 - postgres-exporter.yaml
