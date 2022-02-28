@@ -3,10 +3,11 @@ kind: Kustomization
 configMapGenerator:
 - name: loki-values
   namespace: flux-system
-  files: [values.yaml]
+  files: [values.yaml=loki-values.yaml]
 - name: promtail-values
   namespace: flux-system
-  files: [values.yaml]
+  files: [values.yaml=promtail-values.yaml]
 resources:
-- helm-release.yaml
-- datasource.yaml
+- loki-helm-release.yaml
+- loki-datasource.yaml
+- promtail-helm-release.yaml

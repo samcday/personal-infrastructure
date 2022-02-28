@@ -3,4 +3,7 @@ kind: Kustomization
 configurations:
 - ../kustomizeconfig.yaml
 resources:
+- kube-prometheus-stack/
 - limit-range.yaml
+- loki/
+- promtail/
