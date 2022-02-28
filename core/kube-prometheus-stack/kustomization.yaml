@@ -8,6 +8,5 @@ configMapGenerator:
   files: [values.yaml]
 resources:
 - helm-release.yaml
-- helm-repo.yaml
 - secrets.yaml
 - vpa.yaml
