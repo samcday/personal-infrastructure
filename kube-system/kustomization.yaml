@@ -3,6 +3,15 @@ kind: Kustomization
 configurations:
 - ../kustomizeconfig.yaml
 resources:
+- cilium/
+- cluster-autoscaler/
+- external-dns/
+- hcloud-controller-manager/
+- hcloud-csi-driver/
 - limit-range.yaml
+- metrics-server/
+- postgres-operator/
 - sops-secrets-operator/
+- system-upgrade-controller/
+- tailscale/
 - vertical-pod-autoscaler/
