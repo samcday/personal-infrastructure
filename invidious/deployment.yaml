@@ -70,13 +70,6 @@ spec:
             secretKeyRef:
               name: invidious
               key: hmac
-        resources:
-          requests:
-            cpu: 1
-            memory: 32Mi
-          limits:
-            cpu: 1
-            memory: 32Mi
         volumeMounts:
         - name: config-template
           mountPath: /config-template
