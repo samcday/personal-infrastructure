@@ -61,6 +61,11 @@ alertmanager:
       external-dns.alpha.kubernetes.io/internal-hostname: alertmanager.samcday.com
       external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 grafana:
+  dashboards:
+    default:
+      rook-ceph-cluster:
+        gnetId: 2842
+        revision: 14
   service:
     annotations:
       external-dns.alpha.kubernetes.io/internal-hostname: grafana.samcday.com
