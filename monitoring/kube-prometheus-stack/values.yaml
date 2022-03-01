@@ -1,5 +1,3 @@
-kubeApiServer:
-  enabled: false
 kubeControllerManager:
   serviceMonitor:
     insecureSkipVerify: true
