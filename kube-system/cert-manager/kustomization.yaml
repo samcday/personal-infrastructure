@@ -7,3 +7,4 @@ configMapGenerator:
 resources:
 - helm-release.yaml
 - issuers.yaml
+- vpa.yaml
