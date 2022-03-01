@@ -6,3 +6,4 @@ configMapGenerator:
   files: [values.yaml]
 resources:
 - helm-release.yaml
+- vpa.yaml
