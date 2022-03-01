@@ -6,6 +6,9 @@ configMapGenerator:
 - name: rook-ceph-operator-values
   namespace: flux-system
   files: [operator/values.yaml]
+- name: rook-ceph-cluster-values
+  namespace: flux-system
+  files: [cluster/values.yaml]
 resources:
 - cluster/helm-release.yaml
 - limit-range.yaml
