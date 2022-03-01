@@ -1,9 +1,21 @@
+# https://github.com/cowboysysop/charts/blob/master/charts/vertical-pod-autoscaler/values.yaml
 admissionController:
+  pdb:
+    create: true
   resources: &resources
     requests:
       cpu: 50m
       memory: 32Mi
 recommender:
+  extraArgs:
+    pod-recommendation-min-cpu-millicores: 1
+    pod-recommendation-min-memory-mb: 32
+  pdb:
+    create: true
   resources: *resources
 updater:
+  extraArgs:
+    min-replicas: 1
+  pdb:
+    create: true
   resources: *resources
