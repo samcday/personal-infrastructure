@@ -13,7 +13,8 @@ spec:
   resourcePolicy:
     containerPolicies:
     - containerName: "*"
-      controlledResources: [memory]
+      controlledResources: [cpu, memory]
+      controlledValues: RequestsOnly
 ---
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -30,4 +31,4 @@ spec:
   resourcePolicy:
     containerPolicies:
     - containerName: "*"
-      controlledResources: [memory]
+      controlledValues: RequestsOnly

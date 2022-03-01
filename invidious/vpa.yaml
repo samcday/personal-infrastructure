@@ -13,9 +13,6 @@ spec:
   resourcePolicy:
     containerPolicies:
     - containerName: "*"
-      controlledResources: [memory]
-    - containerName: "*"
-      controlledResources: [cpu]
       controlledValues: RequestsOnly
 ---
 apiVersion: autoscaling.k8s.io/v1
