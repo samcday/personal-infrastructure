@@ -1,3 +1,13 @@
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+          - metrics-server
+      topologyKey: kubernetes.io/hostname
 args:
 - --kubelet-insecure-tls
 # Might as well put metrics-server metrics in Prometheus!
