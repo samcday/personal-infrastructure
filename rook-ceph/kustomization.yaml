@@ -8,4 +8,5 @@ configMapGenerator:
   files: [operator/values.yaml]
 resources:
 - limit-range.yaml
+- cluster/helm-release.yaml
 - operator/helm-release.yaml
