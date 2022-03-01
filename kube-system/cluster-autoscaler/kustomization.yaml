@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
 - cluster-autoscaler.yaml
 - cloud-init-generator.yml
-
+- vpa.yaml
 configMapGenerator:
 - name: cloud-init-generator-script
   namespace: kube-system
