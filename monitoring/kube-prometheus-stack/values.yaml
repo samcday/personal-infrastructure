@@ -17,6 +17,9 @@ prometheus:
   prometheusSpec:
     enableAdminAPI: true
     podMonitorSelectorNilUsesHelmValues: false
+    resources:
+      limits:
+        memory: 1536Mi
     retention: 30d
     retentionSize: 30GB
     serviceMonitorSelectorNilUsesHelmValues: false
