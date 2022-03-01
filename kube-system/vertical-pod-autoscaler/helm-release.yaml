@@ -16,8 +16,7 @@ spec:
     createNamespace: true
   interval: 1h
   releaseName: vertical-pod-autoscaler
-  targetNamespace: vertical-pod-autoscaler
+  targetNamespace: kube-system
   valuesFrom:
   - kind: ConfigMap
     name: vertical-pod-autoscaler-values
-
