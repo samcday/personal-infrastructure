@@ -7,6 +7,6 @@ configMapGenerator:
   namespace: flux-system
   files: [operator/values.yaml]
 resources:
-- limit-range.yaml
 - cluster/helm-release.yaml
+- limit-range.yaml
 - operator/helm-release.yaml
