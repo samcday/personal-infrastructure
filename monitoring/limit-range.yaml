@@ -15,6 +15,6 @@ spec:
       cpu: 1000m
       memory: 2Gi
     min:
-      cpu: 10m
+      cpu: 1m
       memory: 16Mi
     type: Container
