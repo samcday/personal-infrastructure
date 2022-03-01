@@ -66,7 +66,19 @@ grafana:
       rook-ceph-cluster:
         gnetId: 2842
         revision: 14
-        prometheus: Prometheus
+        datasource: Prometheus
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
   service:
     annotations:
       external-dns.alpha.kubernetes.io/internal-hostname: grafana.samcday.com
