@@ -20,7 +20,7 @@ resources:
 - helmrepos/openebs.yaml
 - helmrepos/postgres-operator.yaml
 - helmrepos/prometheus-community.yaml
-- helmrepos/rook.yaml
+- helmrepos/rook-release.yaml
 - helmrepos/sops-secrets-operator.yaml
 - kustomizations/flux-system.yaml
 - kustomizations/invidious.yaml
