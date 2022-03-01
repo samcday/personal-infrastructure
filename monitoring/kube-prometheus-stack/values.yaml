@@ -66,6 +66,7 @@ grafana:
       rook-ceph-cluster:
         gnetId: 2842
         revision: 14
+        datasource: Prometheus
   service:
     annotations:
       external-dns.alpha.kubernetes.io/internal-hostname: grafana.samcday.com
