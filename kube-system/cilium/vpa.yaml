@@ -9,7 +9,7 @@ spec:
     kind: DaemonSet
     name: cilium
   updatePolicy:
-    updateMode: Auto
+    updateMode: Initial
   resourcePolicy:
     containerPolicies:
     - containerName: "*"
