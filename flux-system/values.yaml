@@ -13,6 +13,8 @@ kustomizecontroller:
   replicas: 2
   tolerations: *tolerations
 notificationcontroller:
+  replicas: 2
   tolerations: *tolerations
 sourcecontroller:
+  replicas: 2
   tolerations: *tolerations
