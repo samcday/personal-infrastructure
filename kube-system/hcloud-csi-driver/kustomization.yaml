@@ -14,7 +14,7 @@ patches:
       path: /spec/template/spec/containers/1/env/3/valueFrom/secretKeyRef
       value:
         name: hcloud
-        key: HCLOUD_TOKEN
+        key: token
 - target:
     group: apps
     version: v1
@@ -25,4 +25,4 @@ patches:
       path: /spec/template/spec/containers/3/env/4/valueFrom/secretKeyRef
       value:
         name: hcloud
-        key: HCLOUD_TOKEN
+        key: token

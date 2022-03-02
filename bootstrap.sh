@@ -272,7 +272,7 @@ fi
 
 # We'll stuff the HCLOUD_TOKEN we've been using all this time into the cluster as well.
 # The cluster autoscaler, hcloud CSI driver and CCM all need it.
-$kubectl -n kube-system create secret generic hcloud --from-literal=HCLOUD_TOKEN=$HCLOUD_TOKEN -o yaml --dry-run=client \
+$kubectl -n kube-system create secret generic hcloud --from-literal=token=$HCLOUD_TOKEN -o yaml --dry-run=client \
   | $kubectl apply -f-
 
 # The hash of the Kubernetes CA will be useful for cluster-autoscaler later, when bringing up new workers.
