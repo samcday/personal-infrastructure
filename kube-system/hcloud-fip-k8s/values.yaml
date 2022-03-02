@@ -1,0 +1,4 @@
+floatingIP:
+  selector: role=vip
+  label: node-role.kubernetes.io/vip
+  setupAnnotation: samcday.com/vip

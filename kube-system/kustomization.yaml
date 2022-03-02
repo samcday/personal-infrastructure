@@ -6,6 +6,9 @@ configMapGenerator:
 - name: openebs-values
   namespace: flux-system
   files: [openebs/values.yaml]
+- name: hcloud-fip-k8s-values
+  namespace: flux-system
+  files: [hcloud-fip-k8s/values.yaml]
 - name: postgres-operator-values
   namespace: flux-system
   files: [postgres-operator/values.yaml]
@@ -16,6 +19,7 @@ resources:
 - external-dns/
 - hcloud-controller-manager/
 - hcloud-csi-driver/
+- hcloud-fip-k8s/helm-release.yaml
 - ingress-nginx/
 - limit-range.yaml
 - metrics-server/
