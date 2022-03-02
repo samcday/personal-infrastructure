@@ -67,26 +67,26 @@ if ! hcloud firewall describe cluster -o json > /tmp/firewall.json 2>/dev/null; 
   hcloud firewall describe cluster > /tmp/firewall.json
 fi
 
-# Similar to the load balancer, the firewall is attached to label selectors matching the base + autoscaled nodes.
-for label in "${labels[@]}"; do
-  if [[ -z "$(jq ".applied_to | map(select(.label_selector.selector==\"$label\")) | .[]" < /tmp/firewall.json)" ]]; then
-    hcloud firewall apply-to-resource cluster --type label_selector --label-selector $label
-  fi
-done
-
 # In its operational state, all external traffic comes in via the load balancer. The LB talks to the nodes via the
 # private network. Intra-cluster traffic (pods talking to pods/services, etc) also routes through the private network.
 # As such, the firewall typically requires no inbound rules at all (drop all traffic from external sources).
 # It's only during bootstrapping that we need direct SSH access to the nodes. Later, a Tailscale subnet router will
 # be deployed into the cluster to access internal services / nodes. Whilst not strictly necessary, UDP 41641 is opened
 # to allow efficient NAT traversal (and avoid using a relay).
-ports=(22:tcp:TempSSH 41641:udp:Tailscale)
+ports=(22:tcp:TempSSH 80:tcp:http 443:tcp:https 41641:udp:Tailscale)
 for port in "${ports[@]}"; do
   name=$(echo "$port" | cut -d':' -f3)
   prot=$(echo "$port" | cut -d':' -f2)
   port=$(echo "$port" | cut -d':' -f1)
   if [[ -z "$(jq ".rules | map(select(.direction==\"in\" and .port==\"$port\")) | .[]" < /tmp/firewall.json)" ]]; then
     hcloud firewall add-rule cluster --description="$name" --protocol="$prot" --port="$port" --direction=in --source-ips=0.0.0.0/0 --source-ips=::/0
+  fi
+done
+
+# Similar to the load balancer, the firewall is attached to label selectors matching the base + autoscaled nodes.
+for label in "${labels[@]}"; do
+  if [[ -z "$(jq ".applied_to | map(select(.label_selector.selector==\"$label\")) | .[]" < /tmp/firewall.json)" ]]; then
+    hcloud firewall apply-to-resource cluster --type label_selector --label-selector $label
   fi
 done
 
