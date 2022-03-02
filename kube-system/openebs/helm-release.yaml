@@ -15,8 +15,6 @@ spec:
   interval: 30m
   releaseName: openebs
   targetNamespace: kube-system
-  values:
-    ndm:
-      enabled: false
-    ndmOperator:
-      enabled: false
+  valuesFrom:
+  - kind: ConfigMap
+    name: openebs-values
