@@ -16,7 +16,7 @@ spec:
     createNamespace: true
   interval: 30m
   releaseName: openebs
-  targetNamespace: openebs
+  targetNamespace: kube-system
   values:
     ndm:
       enabled: false

@@ -12,6 +12,7 @@ resources:
 - ingress-nginx/
 - limit-range.yaml
 - metrics-server/
+- openebs/
 - postgres-operator/
 - sops-secrets-operator/
 - system-upgrade-controller/
