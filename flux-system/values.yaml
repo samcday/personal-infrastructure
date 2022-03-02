@@ -10,6 +10,7 @@ imageautomationcontroller:
 imagereflectorcontroller:
   create: false
 kustomizecontroller:
+  replicas: 2
   tolerations: *tolerations
 notificationcontroller:
   tolerations: *tolerations
