@@ -8,17 +8,18 @@ configMapGenerator:
   files: [values.yaml]
 resources:
 - gitrepos/personal-infrastructure.yaml
+- gitrepos/postgres-operator.yaml
 - helm-release.yaml
 - helmrepos/cilium.yaml
 - helmrepos/cowboysysop.yaml
 - helmrepos/fluxcd-community.yaml
 - helmrepos/grafana.yaml
+- helmrepos/hcloud-fip-k8s.yaml
 - helmrepos/ingress-nginx.yaml
 - helmrepos/jetstack.yaml
 - helmrepos/kubernetes-dashboard.yaml
 - helmrepos/metrics-server.yaml
 - helmrepos/openebs.yaml
-- helmrepos/postgres-operator.yaml
 - helmrepos/prometheus-community.yaml
 - helmrepos/rook-release.yaml
 - helmrepos/sops-secrets-operator.yaml

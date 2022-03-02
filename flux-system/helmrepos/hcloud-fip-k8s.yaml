@@ -2,9 +2,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: HelmRepository
 metadata:
-  name: cowboysysop
+  name: hcloud-fip-k8s
   namespace: flux-system
 spec:
   interval: 1h
-  url: https://cowboysysop.github.io/charts/
-
+  url: https://samcday.github.io/hcloud-fip-k8s/

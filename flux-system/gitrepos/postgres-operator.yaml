@@ -5,7 +5,7 @@ metadata:
   name: postgres-operator
   namespace: flux-system
 spec:
-  interval: 1m0s
+  interval: 1h
   ref:
     tag: v1.7.1
   url: https://github.com/zalando/postgres-operator
