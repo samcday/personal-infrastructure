@@ -12,6 +12,10 @@ configMapGenerator:
 - name: postgres-operator-values
   namespace: flux-system
   files: [postgres-operator/values.yaml]
+
+- name: kubeadm-config
+  namespace: kube-system
+  files: [ClusterConfiguration=kubeadm-config.yaml]
 resources:
 - cert-manager/
 - cilium/

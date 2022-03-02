@@ -67,12 +67,6 @@ if ! hcloud firewall describe cluster -o json > /tmp/firewall.json 2>/dev/null; 
   hcloud firewall describe cluster > /tmp/firewall.json
 fi
 
-# In its operational state, all external traffic comes in via the load balancer. The LB talks to the nodes via the
-# private network. Intra-cluster traffic (pods talking to pods/services, etc) also routes through the private network.
-# As such, the firewall typically requires no inbound rules at all (drop all traffic from external sources).
-# It's only during bootstrapping that we need direct SSH access to the nodes. Later, a Tailscale subnet router will
-# be deployed into the cluster to access internal services / nodes. Whilst not strictly necessary, UDP 41641 is opened
-# to allow efficient NAT traversal (and avoid using a relay).
 ports=(22:tcp:TempSSH 80:tcp:http 443:tcp:https 41641:udp:Tailscale)
 for port in "${ports[@]}"; do
   name=$(echo "$port" | cut -d':' -f3)
