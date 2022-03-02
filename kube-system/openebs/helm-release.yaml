@@ -12,8 +12,6 @@ spec:
         kind: HelmRepository
         name: openebs
       version: 3.1.0
-  install:
-    createNamespace: true
   interval: 30m
   releaseName: openebs
   targetNamespace: kube-system
