@@ -16,5 +16,4 @@ notificationcontroller:
   replicas: 2
   tolerations: *tolerations
 sourcecontroller:
-  replicas: 2
   tolerations: *tolerations
