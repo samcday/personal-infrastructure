@@ -23,6 +23,7 @@ resources:
 - helmrepos/rook-release.yaml
 - helmrepos/sops-secrets-operator.yaml
 - kustomizations/flux-system.yaml
+- kustomizations/flux-system-extra.yaml
 - kustomizations/invidious.yaml
 - kustomizations/kube-system.yaml
 - kustomizations/monitoring.yaml

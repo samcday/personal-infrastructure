@@ -1,35 +1,19 @@
 cli:
   tolerations: &tolerations
   - key: node-role.kubernetes.io/master
-    effect: NoSchedule
     operator: Exists
 helmcontroller:
-  resources:
-    requests:
-      cpu: 50m
+  container:
+    additionalargs: [--enable-leader-election]
+  replicas: 2
   tolerations: *tolerations
 imageautomationcontroller:
-  resources:
-    requests:
-      cpu: 10m
-  tolerations: *tolerations
+  create: false
 imagereflectorcontroller:
-  resources:
-    requests:
-      cpu: 10m
-  tolerations: *tolerations
+  create: false
 kustomizecontroller:
-  resources:
-    requests:
-      cpu: 50m
   tolerations: *tolerations
 notificationcontroller:
-  resources:
-    requests:
-      cpu: 50m
   tolerations: *tolerations
 sourcecontroller:
-  resources:
-    requests:
-      cpu: 50m
   tolerations: *tolerations
