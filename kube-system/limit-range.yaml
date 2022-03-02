@@ -14,6 +14,8 @@ spec:
     max:
       cpu: 1000m
       memory: 1Gi
+    maxLimitRequestRatio:
+      memory: 5
     min:
       cpu: 1m
       memory: 16Mi
