@@ -3,8 +3,6 @@ cli:
   - key: node-role.kubernetes.io/master
     operator: Exists
 helmcontroller:
-  container:
-    additionalargs: [--enable-leader-election]
   replicas: 2
   tolerations: *tolerations
 imageautomationcontroller:
