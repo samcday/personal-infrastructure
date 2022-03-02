@@ -11,5 +11,5 @@ spec:
   sourceRef:
     kind: GitRepository
     name: personal-infrastructure
-  timeout: 2m0s
+  timeout: 30s
   wait: true
