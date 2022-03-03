@@ -10,5 +10,4 @@ controller:
   - key: node-role.kubernetes.io/master
     operator: Exists
   service:
-    type: ClusterIP
     externalIPs: [78.46.240.242]
