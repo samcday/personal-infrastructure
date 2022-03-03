@@ -16,6 +16,7 @@ configMapGenerator:
 - name: kubeadm-config
   namespace: kube-system
   files: [ClusterConfiguration=kubeadm-config.yaml]
+  options: {disableNameSuffixHash: true}
 resources:
 - cert-manager/
 - cilium/
