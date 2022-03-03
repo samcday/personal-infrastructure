@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: webhook-receiver
   namespace: flux-system
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
 spec:
   ingressClassName: nginx
   rules:
