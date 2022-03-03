@@ -78,3 +78,5 @@ spec:
                   key: token
             - name: HCLOUD_NETWORK
               value: cluster
+            - name: HCLOUD_LOAD_BALANCERS_ENABLED
+              value: "false"
