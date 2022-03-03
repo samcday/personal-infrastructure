@@ -5,7 +5,29 @@ set -uexo pipefail
 # The cluster nodes will be in a private network, fronted by a load balancer, and protected by a firewall.
 # The script is idempotent, it can be run repeatedly until completely successful.
 # This means it can also be used to partially rebuild an existing cluster.
-. _setup.sh
+required_tools=(hcloud jq kubectl cilium flux helm)
+for command in "${required_tools[@]}"; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    echo "ERROR: $command not found"
+    exit 1
+  fi
+done
+
+server_type=cx21
+image=ubuntu-20.04
+location=fsn1
+ssh_key=mine
+network_cidr=10.96.0.0/14
+node_cidr=10.96.0.0/16
+kube_version=1.23.3
+
+[[ -f .env ]] && source .env
+
+if [[ -z "${HCLOUD_TOKEN:-}" ]]; then
+  echo "HCLOUD_TOKEN not set"
+  exit 1
+fi
+export HCLOUD_TOKEN
 
 # Create a placement group to ensure the 3 nodes are spread across multiple failure zones.
 if ! hcloud placement-group describe cluster >/dev/null 2>&1; then
@@ -19,54 +41,17 @@ if ! hcloud network describe cluster -o json >/tmp/network.json 2>/dev/null; the
   hcloud network create --ip-range $network_cidr --name cluster
   hcloud network describe cluster -o json >/tmp/network.json
 fi
-
-# Subnets in Hetzner Cloud are not yet feature complete, so we just create one spanning the whole network.
-if [[ -z "$(jq ".subnets | map(select(.ip_range == \"$subnet_cidr\")) | .[]" < /tmp/network.json)" ]]; then
-  hcloud network add-subnet cluster --ip-range $subnet_cidr --network-zone eu-central --type cloud
+if [[ -z "$(jq ".subnets | map(select(.ip_range == \"$node_cidr\")) | .[]" < /tmp/network.json)" ]]; then
+  hcloud network add-subnet cluster --ip-range $node_cidr --network-zone eu-central --type cloud
 fi
 
 echo network configured
 
-# Create a load balancer. It will provide HA for Kubernetes API Server, as well as regular HTTP(S) ingress.
-if ! hcloud load-balancer describe cluster -o json > /tmp/lb.json 2>/dev/null; then
-  hcloud load-balancer create --algorithm-type round_robin --location $location --name cluster --type $loadbalancer_type
-  hcloud load-balancer describe cluster -o json > /tmp/lb.json
-fi
-
-# The load balancer is attached to the private network, this way the nodes do not need to listen on the public 'net.
-network_id=$(jq .id < /tmp/network.json)
-if [[ -z "$(jq ".private_net | map(select(.network == $network_id)) | .[]" < /tmp/lb.json)" ]]; then
-  hcloud load-balancer attach-to-network cluster --network cluster
-fi
-
-# HTTP(S) traffic uses proxy protocol, so that ingress-nginx in the cluster knows where the original request came from.
-for port in 80:32080:--proxy-protocol 443:32443:--proxy-protocol 6443:31443:; do
-  listen_port=$(echo $port | cut -d':' -f1)
-  dest_port=$(echo $port | cut -d':' -f2)
-  flags=$(echo $port | cut -d':' -f3)
-
-  if [[ -z "$(jq ".services | map(select(.listen_port == $listen_port)) | .[]" < /tmp/lb.json)" ]]; then
-    hcloud load-balancer add-service cluster --destination-port "$dest_port" --listen-port "$listen_port" --protocol tcp $flags
-  fi
-done 
-
-# The load balancer sends traffic to nodes based on labels. The base 3 nodes will have a "cluster" label.
-# The cluster will also be autoscaled, using cluster-autoscaler. The worker nodes have a different label.
-labels=(cluster hcloud/node-group=pool)
-for label in "${labels[@]}"; do
-  if [[ -z "$(jq ".targets | map(select(.label_selector.selector==\"$label\")) | .[]" < /tmp/lb.json)" ]]; then
-    hcloud load-balancer add-target cluster --label-selector $label --use-private-ip
-  fi
-done
-
-echo loadbalancer configured
-
-# The firewall protects all cluster nodes and is heavily restricted.
+# create a firewall which only allows http ingress + tailscale
 if ! hcloud firewall describe cluster -o json > /tmp/firewall.json 2>/dev/null; then
   hcloud firewall create --name cluster
   hcloud firewall describe cluster > /tmp/firewall.json
 fi
-
 ports=(22:tcp:TempSSH 80:tcp:http 443:tcp:https 41641:udp:Tailscale)
 for port in "${ports[@]}"; do
   name=$(echo "$port" | cut -d':' -f3)
@@ -85,9 +70,6 @@ for label in "${labels[@]}"; do
 done
 
 echo firewall configured
-
-# Now we're finally ready to bootstrap the nodes proper.
-export loadbalancer_ip=$(jq -r .public_net.ipv4.ip < /tmp/lb.json)
 
 for name in cluster{1..3}; do
   if ! hcloud server describe $name -o json >/tmp/server-$name.json 2>/dev/null; then

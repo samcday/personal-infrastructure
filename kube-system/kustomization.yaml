@@ -30,6 +30,7 @@ resources:
 - openebs/helm-release.yaml
 - postgres-operator/helm-release.yaml
 - sops-secrets-operator/
+- svc-kube-public.yaml
 - system-upgrade-controller/
 - tailscale/
 - vertical-pod-autoscaler/

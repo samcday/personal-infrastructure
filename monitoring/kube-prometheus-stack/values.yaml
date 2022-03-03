@@ -35,7 +35,6 @@ prometheus:
   service:
     annotations:
       external-dns.alpha.kubernetes.io/internal-hostname: prometheus.samcday.com
-      external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 alertmanager:
   config:
     route:
@@ -59,7 +58,6 @@ alertmanager:
   service:
     annotations:
       external-dns.alpha.kubernetes.io/internal-hostname: alertmanager.samcday.com
-      external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 grafana:
   dashboards:
     default:
@@ -82,4 +80,3 @@ grafana:
   service:
     annotations:
       external-dns.alpha.kubernetes.io/internal-hostname: grafana.samcday.com
-      external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"

@@ -106,7 +106,6 @@ metadata:
   name: apiserver
   namespace: play-cluster
   annotations:
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
     external-dns.alpha.kubernetes.io/hostname: apiserver.play-cluster.samcday.com
 spec:
   type: NodePort

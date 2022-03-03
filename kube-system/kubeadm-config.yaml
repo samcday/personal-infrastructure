@@ -23,10 +23,10 @@ apiServer:
   timeoutForControlPlane: 4m0s
 certificatesDir: /etc/kubernetes/pki
 clusterName: personal
-controlPlaneEndpoint: ${loadbalancer_ip}:6443
 controllerManager:
   extraArgs:
     bind-address: 0.0.0.0
+controlPlaneEndpoint: kube.samcday.com:6443
 dns:
   type: CoreDNS
 etcd:
@@ -35,7 +35,7 @@ etcd:
     extraArgs:
       listen-metrics-urls: http://0.0.0.0:2381
 imageRepository: k8s.gcr.io
-kubernetesVersion: ${kube_version}
+kubernetesVersion: 1.23.3
 networking:
   dnsDomain: cluster.local
   podSubnet: 10.98.0.0/15

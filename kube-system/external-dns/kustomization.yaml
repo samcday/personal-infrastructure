@@ -19,7 +19,7 @@ patches:
       - name: EXTERNAL_DNS_PROVIDER
         value: cloudflare
       - name: EXTERNAL_DNS_CLOUDFLARE_PROXIED
-        value: "true"
+        value: "false"
       - name: CF_API_TOKEN
         valueFrom:
           secretKeyRef:
