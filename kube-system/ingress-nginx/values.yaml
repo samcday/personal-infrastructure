@@ -6,10 +6,6 @@ controller:
     maxReplicas: 4
     targetCPUUtilizationPercentage: 85
     targetMemoryUtilizationPercentage: ~
-  config:
-    use-proxy-protocol: true
-  extraArgs:
-    enable-ssl-passthrough: ""
   tolerations:
   - key: node-role.kubernetes.io/master
     operator: Exists
