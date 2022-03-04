@@ -219,7 +219,7 @@ controlPlane:
   certificateKey: $cert_key
 discovery:
   bootstrapToken:
-    apiServerEndpoint: $loadbalancer_ip:6443
+    apiServerEndpoint: kube.samcday.com:6443
     token: $join_token
     caCertHashes: [$discovery_token_hash]
 nodeRegistration:
