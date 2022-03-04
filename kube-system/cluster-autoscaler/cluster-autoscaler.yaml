@@ -154,7 +154,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: hcloud
-              key: HCLOUD_TOKEN
+              key: token
         - name: HCLOUD_CLOUD_INIT
           valueFrom:
             secretKeyRef:
