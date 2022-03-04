@@ -59,4 +59,5 @@ cephClusterSpec:
 monitoring:
   enabled: true
 toolbox:
+  enabled: true
   tolerations: *tolerations
