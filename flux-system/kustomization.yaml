@@ -28,7 +28,7 @@ resources:
 - kustomizations/invidious.yaml
 - kustomizations/kube-system.yaml
 - kustomizations/monitoring.yaml
-- kustomizations/rook-ceph.yaml
+# - kustomizations/rook-ceph.yaml
 - kustomizations/synapse.yaml
 - limit-range.yaml
 - receiver.yaml
