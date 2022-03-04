@@ -39,6 +39,9 @@ cephClusterSpec:
     mgr:
       limits:
         memory: 512Mi
+    osd:
+      limits:
+        memory: 512Mi
   storage:
    storageClassDeviceSets:
     - name: hcloud
