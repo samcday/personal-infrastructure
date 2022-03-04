@@ -1,3 +1,5 @@
+# https://github.com/rook/rook/blob/master/deploy/charts/rook-ceph-cluster/values.yaml
+
 cephClusterSpec:
   cephVersion:
     image: quay.io/ceph/ceph:v16.2.7

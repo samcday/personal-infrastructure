@@ -12,4 +12,5 @@ configMapGenerator:
 resources:
 - cluster/helm-release.yaml
 - limit-range.yaml
+- namespace.yaml
 - operator/helm-release.yaml
