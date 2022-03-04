@@ -1,23 +1,27 @@
 # https://github.com/rook/rook/blob/master/deploy/charts/rook-ceph-cluster/values.yaml
-
+cephBlockPools: null
+cephFileSystems: null
+cephObjectStores: null
 cephClusterSpec:
   cephVersion:
     image: quay.io/ceph/ceph:v16.2.7
   dashboard:
     enabled: true
   dataDirHostPath: /var/lib/rook
+  mgr:
+    count: 1
   mon:
-    count: 3
+    count: 1
     allowMultiplePerNode: false
     volumeClaimTemplate:
       spec:
-        storageClassName: hcloud-volumes
+        storageClassName: openebs-hostpath  
         resources:
           requests:
             storage: 10Gi
   placement:
-    all:
-      nodeAffinity:
+    mon:
+      nodeAffinity: &affinity
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
           - matchExpressions:
@@ -28,6 +32,9 @@ cephClusterSpec:
         operator: Exists
       - key: node-role.kubernetes.io/control-plane
         operator: Exists
+    osd:
+      nodeAffinity: *affinity
+      tolerations: *tolerations
   storage:
    storageClassDeviceSets:
     - name: set1
