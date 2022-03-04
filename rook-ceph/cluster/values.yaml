@@ -20,7 +20,7 @@ cephClusterSpec:
           requests:
             storage: 10Gi
   placement:
-    mon:
+    mgr:
       nodeAffinity: &affinity
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
@@ -32,13 +32,13 @@ cephClusterSpec:
         operator: Exists
       - key: node-role.kubernetes.io/control-plane
         operator: Exists
-    osd:
+    mon:
       nodeAffinity: *affinity
       tolerations: *tolerations
   storage:
    storageClassDeviceSets:
-    - name: set1
-      count: 3
+    - name: hcloud
+      count: 2
       portable: false
       encrypted: false
       volumeClaimTemplates:
