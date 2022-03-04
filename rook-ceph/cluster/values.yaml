@@ -35,6 +35,10 @@ cephClusterSpec:
     mon:
       nodeAffinity: *affinity
       tolerations: *tolerations
+  resources:
+    mgr:
+      limits:
+        memory: 512Mi
   storage:
    storageClassDeviceSets:
     - name: hcloud
