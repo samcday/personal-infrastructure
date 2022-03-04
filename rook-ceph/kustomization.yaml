@@ -1,13 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: rook-ceph
 configurations:
 - ../kustomizeconfig.yaml
 configMapGenerator:
 - name: rook-ceph-operator-values
-  namespace: flux-system
   files: [operator/values.yaml]
 - name: rook-ceph-cluster-values
-  namespace: flux-system
   files: [cluster/values.yaml]
 resources:
 # - cluster/helm-release.yaml
