@@ -13,3 +13,4 @@ resources:
 - limit-range.yaml
 - namespace.yaml
 - operator/helm-release.yaml
+- vpa.yaml
