@@ -19,6 +19,7 @@ resources:
 - helmrepos/jetstack.yaml
 - helmrepos/kubernetes-dashboard.yaml
 - helmrepos/metrics-server.yaml
+- helmrepos/morremeyer.yaml
 - helmrepos/openebs.yaml
 - helmrepos/prometheus-community.yaml
 - helmrepos/sops-secrets-operator.yaml

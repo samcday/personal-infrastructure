@@ -1,0 +1,34 @@
+# https://github.com/morremeyer/charts/blob/main/charts/generic/values.yaml
+
+additionalVolumes:
+- name: config
+  configMap:
+    name: config
+additionalVolumeMounts:
+- name: config
+  mountPath: /config
+command:
+- /bin/sh
+- -c
+- |-
+  exec /src/nitter
+env:
+  NITTER_CONF_FILE: /config/nitter.conf
+image:
+  repository: zedeus/nitter
+  tag: ecb6fe4162142f7260b36d4ac4021d6ac7cd2b49
+ingress:
+  enabled: true
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+  className: nginx
+  hosts:
+  - host: nitter.samcday.com
+  tls:
+  - hosts:
+    - invidious.samcday.com
+    secretName: certificate
+replicaCount: 1
+service:
+  name: nitter
+  port: 8080
