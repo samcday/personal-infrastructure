@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: miniflux
+  namespace: miniflux
+spec:
+  endpoints:
+  - targetPort: http
+  jobLabel: miniflux
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: miniflux

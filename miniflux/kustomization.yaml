@@ -11,4 +11,5 @@ resources:
 - namespace.yaml
 - postgres.yaml
 - secrets.yaml
+- servicemonitor.yaml
 - vpa.yaml

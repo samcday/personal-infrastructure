@@ -8,9 +8,12 @@ command:
   export DATABASE_URL=postgres://miniflux:$DB_PASS@miniflux-db/miniflux
   exec /usr/bin/miniflux
 env:
-  RUN_MIGRATIONS: "1"
-  CREATE_ADMIN: "1"
   ADMIN_USERNAME: admin
+  BASE_URL: https://miniflux.samcday.com
+  CREATE_ADMIN: "1"
+  INVIDIOUS_INSTANCE: invidious.samcday.com
+  METRICS_COLLECTOR: "1"
+  RUN_MIGRATIONS: "1"
 envValueFrom:
   ADMIN_PASSWORD:
     secretKeyRef:
