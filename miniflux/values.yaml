@@ -8,7 +8,14 @@ command:
   export DATABASE_URL=postgres://miniflux:$DB_PASS@miniflux-db/miniflux
   exec /usr/bin/miniflux
 env:
+  RUN_MIGRATIONS: "1"
+  CREATE_ADMIN: "1"
+  ADMIN_USERNAME: admin
 envValueFrom:
+  ADMIN_PASSWORD:
+    secretKeyRef:
+      name: admin-password
+      key: ADMIN_PASSWORD
   DB_PASS:
     secretKeyRef:
       name: miniflux.miniflux-db.credentials.postgresql.acid.zalan.do
