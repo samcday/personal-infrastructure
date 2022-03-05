@@ -24,6 +24,8 @@ ingress:
   className: nginx
   hosts:
   - host: nitter.samcday.com
+    paths:
+    - path: /
   tls:
   - hosts:
     - invidious.samcday.com
