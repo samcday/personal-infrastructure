@@ -2,7 +2,7 @@ apiVersion: v1
 kind: LimitRange
 metadata:
   name: happy-cluster
-  namespace: kube-system
+  namespace: miniflux
 spec:
   limits:
   - default:
