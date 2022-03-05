@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mautrix-signal
   namespace: synapse
@@ -10,8 +10,6 @@ spec:
   selector:
     matchLabels:
       app: mautrix-signal
-  strategy:
-    type: Recreate
   template:
     metadata:
       annotations:
@@ -75,8 +73,15 @@ spec:
           name: mautrix-signal
       - name: data
         emptyDir: {}
-      - name: signald
-        emptyDir: {}
+  volumeClaimTemplates:
+  - metadata:
+      name: signald
+    spec:
+      accessModes: [ReadWriteOnce]
+      storageClassName: hcloud-volumes
+      resources:
+        requests:
+          storage: 10Gi
 ---
 apiVersion: v1
 kind: Service
