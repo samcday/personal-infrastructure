@@ -39,7 +39,10 @@ ingress:
   - hosts:
     - nitter.samcday.com
     secretName: certificate
-livenessProbe: ~
+livenessProbe:
+  httpGet:
+    path: /POTUS
+    port: 8080
 readinessProbe: ~
 replicaCount: 1
 service:
