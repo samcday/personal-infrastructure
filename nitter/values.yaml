@@ -8,12 +8,20 @@ additionalVolumeMounts:
 - name: config
   mountPath: /config
 command:
-- /bin/sh
+- /bin/ash
 - -c
 - |-
+  set -uexo pipefail
+  sed -e "s/__REDISPASS__/$REDIS_PASSWORD/" \
+    < /config/nitter.conf > /nitter.conf
   exec /src/nitter
 env:
-  NITTER_CONF_FILE: /config/nitter.conf
+  NITTER_CONF_FILE: /nitter.conf
+envValueFrom:
+  REDIS_PASSWORD:
+    secretKeyRef:
+      name: redis
+      key: redis-password
 image:
   repository: zedeus/nitter
   tag: ecb6fe4162142f7260b36d4ac4021d6ac7cd2b49
