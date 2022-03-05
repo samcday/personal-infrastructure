@@ -14,8 +14,6 @@ recommender:
     create: true
   resources: *resources
 updater:
-  extraArgs:
-    min-replicas: 1
   pdb:
     create: true
   resources: *resources
