@@ -30,6 +30,8 @@ ingress:
   - hosts:
     - invidious.samcday.com
     secretName: certificate
+livenessProbe: ~
+readinessProbe: ~
 replicaCount: 1
 service:
   name: nitter
