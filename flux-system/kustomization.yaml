@@ -7,7 +7,6 @@ configMapGenerator:
 resources:
 - ../kustomizeconfig/
 - gitrepos/personal-infrastructure.yaml
-- gitrepos/postgres-operator.yaml
 - helm-release.yaml
 - helmrepos/bitnami.yaml
 - helmrepos/cilium.yaml
@@ -23,6 +22,7 @@ resources:
 - helmrepos/openebs.yaml
 - helmrepos/prometheus-community.yaml
 - helmrepos/sops-secrets-operator.yaml
+- helmrepos/zalando-postgres-operator.yaml
 - kustomizations/flux-system.yaml
 - kustomizations/flux-system-extra.yaml
 - kustomizations/invidious.yaml

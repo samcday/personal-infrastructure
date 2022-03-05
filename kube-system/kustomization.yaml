@@ -8,7 +8,6 @@ configMapGenerator:
   namespace: flux-system
   files: [hcloud-fip-k8s/values.yaml]
 - name: postgres-operator-values
-  namespace: flux-system
   files: [postgres-operator/values.yaml]
 
 - name: kubeadm-config
