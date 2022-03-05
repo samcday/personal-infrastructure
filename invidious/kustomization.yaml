@@ -10,6 +10,7 @@ resources:
 - ingress.yaml
 - limit-range.yaml
 - namespace.yaml
+- pdb.yaml
 - postgres.yaml
 - postgres-exporter.yaml
 - secrets.yaml
