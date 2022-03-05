@@ -1,4 +1,5 @@
 # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+
 kubeApiServer:
   enabled: false
 kubeControllerManager:
@@ -17,11 +18,13 @@ prometheus:
   prometheusSpec:
     enableAdminAPI: true
     podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
     resources:
       limits:
         memory: 2048Mi
     retention: 30d
     retentionSize: 30GB
+    ruleSelectorNilUsesHelmValues: false
     serviceMonitorSelectorNilUsesHelmValues: false
     storageSpec:
       volumeClaimTemplate:
@@ -58,25 +61,9 @@ alertmanager:
   service:
     annotations:
       external-dns.alpha.kubernetes.io/internal-hostname: alertmanager.samcday.com
+
+# https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 grafana:
-  dashboards:
-    default:
-      # rook-ceph-cluster:
-      #   gnetId: 2842
-      #   revision: 14
-      #   datasource: Prometheus
-  dashboardProviders:
-    dashboardproviders.yaml:
-      apiVersion: 1
-      providers:
-      - name: 'default'
-        orgId: 1
-        folder: ''
-        type: file
-        disableDeletion: false
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/default
   service:
     annotations:
       external-dns.alpha.kubernetes.io/internal-hostname: grafana.samcday.com

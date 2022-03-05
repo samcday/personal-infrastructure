@@ -1,7 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-configurations:
-- ../kustomizeconfig.yaml
 configMapGenerator:
 - name: openebs-values
   namespace: flux-system
@@ -18,6 +16,7 @@ configMapGenerator:
   files: [ClusterConfiguration=kubeadm-config.yaml]
   options: {disableNameSuffixHash: true}
 resources:
+- ../kustomizeconfig/
 - cert-manager/
 - cilium/
 - cluster-autoscaler/

@@ -1,12 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-configurations:
-- ../kustomizeconfig.yaml
 configMapGenerator:
 - name: flux-values
   namespace: flux-system
   files: [values.yaml]
 resources:
+- ../kustomizeconfig/
 - gitrepos/personal-infrastructure.yaml
 - gitrepos/postgres-operator.yaml
 - helm-release.yaml
