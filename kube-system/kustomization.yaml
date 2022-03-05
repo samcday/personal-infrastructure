@@ -1,35 +1,50 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: kube-system
 configMapGenerator:
+- name: cert-manager-values
+  files: [cert-manager/values.yaml]
+- name: cilium-values
+  files: [cilium/values.yaml]
 - name: openebs-values
-  namespace: flux-system
   files: [openebs/values.yaml]
 - name: hcloud-fip-k8s-values
-  namespace: flux-system
   files: [hcloud-fip-k8s/values.yaml]
+- name: ingress-nginx-values
+  files: [ingress-nginx/values.yaml]
+- name: metrics-server-values
+  files: [metrics-server/values.yaml]
 - name: postgres-operator-values
   files: [postgres-operator/values.yaml]
+- name: sops-secrets-operator-values
+  files: [sops-secrets-operator/values.yaml]
+- name: vertical-pod-autoscaler-values
+  files: [vertical-pod-autoscaler/values.yaml]
 
 - name: kubeadm-config
-  namespace: kube-system
   files: [ClusterConfiguration=kubeadm-config.yaml]
   options: {disableNameSuffixHash: true}
 resources:
 - ../kustomizeconfig/
-- cert-manager/
-- cilium/
 - cluster-autoscaler/
 - external-dns/
-- hcloud-controller-manager/
 - hcloud-csi-driver/
+- system-upgrade-controller/
+
+- cert-manager/helm-release.yaml
+- cert-manager/issuers.yaml
+- cert-manager/vpa.yaml
+- cilium/helm-release.yaml
+- cilium/vpa.yaml
+- hcloud-controller-manager/ccm.yaml
 - hcloud-fip-k8s/helm-release.yaml
-- ingress-nginx/
+- ingress-nginx/helm-release.yaml
 - limit-range.yaml
-- metrics-server/
+- metrics-server/helm-release.yaml
 - openebs/helm-release.yaml
 - postgres-operator/helm-release.yaml
-- sops-secrets-operator/
+- sops-secrets-operator/helm-release.yaml
 - svc-kube-public.yaml
-- system-upgrade-controller/
-- tailscale/
-- vertical-pod-autoscaler/
+- tailscale/deployment.yaml
+- tailscale/rbac.yaml
+- vertical-pod-autoscaler/helm-release.yaml

@@ -2,8 +2,8 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: individous-postgres-exporter
-  namespace: flux-system
+  name: postgres-exporter
+  namespace: invidious
 spec:
   chart:
     spec:
@@ -14,8 +14,7 @@ spec:
         namespace: flux-system
       version: 2.4.0
   interval: 30m
-  releaseName: invidious-postgres-exporter
-  targetNamespace: invidious
+  releaseName: postgres-exporter
   values:
     config:
       datasource:
@@ -32,4 +31,3 @@ spec:
         memory: 64Mi
     serviceMonitor:
       enabled: true
-      namespace: invidious
