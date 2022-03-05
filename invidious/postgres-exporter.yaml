@@ -23,6 +23,8 @@ spec:
           name: postgres.invidious-db.credentials.postgresql.acid.zalan.do
           key: password
         sslmode: require
+    rbac:
+      pspEnabled: false
     resources:
       requests:
         cpu: 10m
