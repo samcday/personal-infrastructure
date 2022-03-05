@@ -10,4 +10,5 @@ resources:
 - limit-range.yaml
 - namespace.yaml
 - postgres.yaml
+- secrets.yaml
 - vpa.yaml
