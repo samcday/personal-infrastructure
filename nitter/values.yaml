@@ -49,7 +49,7 @@ livenessProbe:
     path: /POTUS
     port: 8080
 readinessProbe: ~
-replicaCount: 1
+replicaCount: 2
 service:
   name: nitter
   targetPort: 8080
