@@ -12,6 +12,7 @@ configMapGenerator:
 resources:
 - ../kustomizeconfig
 - helm-release.yaml
+- limit-range.yaml
 - namespace.yaml
 - redis/helm-release.yaml
 - secrets.yaml

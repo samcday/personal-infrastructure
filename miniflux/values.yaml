@@ -1,0 +1,41 @@
+# https://github.com/morremeyer/charts/blob/main/charts/generic/values.yaml
+
+command:
+- /bin/ash
+- -c
+- |-
+  set -ueo pipefail
+  export DATABASE_URL=postgres://miniflux:$DB_PASS@miniflux-db/miniflux
+  exec /usr/bin/miniflux
+env:
+envValueFrom:
+  DB_PASS:
+    secretKeyRef:
+      name: miniflux.miniflux-db.credentials.postgresql.acid.zalan.do
+      key: password
+image:
+  repository: miniflux/miniflux
+  tag: 2.0.35
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+  className: nginx
+  hosts:
+  - host: miniflux.samcday.com
+    paths:
+    - path: /
+  tls:
+  - hosts:
+    - miniflux.samcday.com
+    secretName: certificate
+livenessProbe:
+  httpGet:
+    path: /healthcheck
+    port: 8080
+readinessProbe: ~
+replicaCount: 2
+service:
+  name: miniflux
+  targetPort: 8080
