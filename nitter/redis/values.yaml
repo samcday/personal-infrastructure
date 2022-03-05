@@ -1,0 +1,5 @@
+master:
+  persistence:
+    enabled: false
+replica:
+  replicaCount: 0
