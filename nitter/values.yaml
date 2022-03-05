@@ -36,4 +36,4 @@ readinessProbe: ~
 replicaCount: 1
 service:
   name: nitter
-  port: 8080
+  targetPort: 8080
