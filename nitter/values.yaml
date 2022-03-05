@@ -13,6 +13,7 @@ command:
 - |-
   set -uexo pipefail
   sed -e "s/__REDISPASS__/$REDIS_PASSWORD/" \
+      -e "s/__HMAC__/$HMAC_TOKEN/" \
     < /config/nitter.conf > /nitter.conf
   exec /src/nitter
 env:
@@ -22,6 +23,10 @@ envValueFrom:
     secretKeyRef:
       name: redis
       key: redis-password
+  HMAC_TOKEN:
+    secretKeyRef:
+      name: hmac
+      key: token
 image:
   repository: zedeus/nitter
   tag: ecb6fe4162142f7260b36d4ac4021d6ac7cd2b49
