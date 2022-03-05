@@ -29,7 +29,7 @@ ingress:
     - path: /
   tls:
   - hosts:
-    - invidious.samcday.com
+    - nitter.samcday.com
     secretName: certificate
 livenessProbe: ~
 readinessProbe: ~
