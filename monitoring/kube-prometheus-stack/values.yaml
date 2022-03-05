@@ -61,10 +61,10 @@ alertmanager:
 grafana:
   dashboards:
     default:
-      rook-ceph-cluster:
-        gnetId: 2842
-        revision: 14
-        datasource: Prometheus
+      # rook-ceph-cluster:
+      #   gnetId: 2842
+      #   revision: 14
+      #   datasource: Prometheus
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1
