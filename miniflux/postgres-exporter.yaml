@@ -1,0 +1,29 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: postgres-exporter
+  namespace: miniflux
+spec:
+  chart:
+    spec:
+      chart: prometheus-postgres-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+      version: 2.4.0
+  interval: 1h
+  releaseName: postgres-exporter
+  values:
+    config:
+      datasource:
+        host: miniflux-db
+        passwordSecret:
+          name: postgres.miniflux-db.credentials.postgresql.acid.zalan.do
+          key: password
+        sslmode: require
+    rbac:
+      pspEnabled: false
+    serviceMonitor:
+      enabled: true

@@ -10,6 +10,7 @@ resources:
 - limit-range.yaml
 - namespace.yaml
 - postgres.yaml
+- postgres-exporter.yaml
 - secrets.yaml
 - servicemonitor.yaml
 - vpa.yaml
