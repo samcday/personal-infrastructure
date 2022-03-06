@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: selfsigned-issuer
-  namespace: play-cluster
+  namespace: playkube
 spec:
   selfSigned: {}
 ---
@@ -10,7 +10,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: kubernetes-ca
-  namespace: play-cluster
+  namespace: playkube
 spec:
   isCA: true
   commonName: kubernetes-ca
@@ -27,7 +27,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: kubernetes-ca-issuer
-  namespace: play-cluster
+  namespace: playkube
 spec:
   ca:
     secretName: kubernetes-ca
@@ -46,7 +46,7 @@ spec:
     algorithm: ECDSA
     size: 256
   usages: [client auth]
-  commonName: play-cluster
+  commonName: playkube
   issuerRef:
     name: etcd-issuer
     kind: Issuer
@@ -56,7 +56,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: admin
-  namespace: play-cluster
+  namespace: playkube
 spec:
   secretName: admin-cert
   privateKey:

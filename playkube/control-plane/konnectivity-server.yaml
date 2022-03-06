@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: konnectivity-server-client
-  namespace: play-cluster
+  namespace: playkube
 spec:
   secretName: konnectivity-server-client-cert
   privateKey:
@@ -21,7 +21,7 @@ metadata:
   labels:
     app: konnectivity-server
   name: konnectivity-server
-  namespace: play-cluster
+  namespace: playkube
 spec:
   replicas: 1
   selector:
@@ -84,7 +84,7 @@ metadata:
   labels:
     app: konnectivity-server
   name: konnectivity-server
-  namespace: play-cluster
+  namespace: playkube
 spec:
   ports:
   - name: server

@@ -31,6 +31,7 @@ resources:
 - kustomizations/monitoring.yaml
 - kustomizations/miniflux.yaml
 - kustomizations/nitter.yaml
+- kustomizations/playkube.yaml
 - kustomizations/synapse.yaml
 - limit-range.yaml
 - receiver.yaml

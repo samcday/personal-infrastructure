@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: admin-shell
-  namespace: play-cluster
+  namespace: playkube
 spec:
   containers:
   - command:

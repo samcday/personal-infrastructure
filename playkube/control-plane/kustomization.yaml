@@ -3,13 +3,13 @@ kind: Kustomization
 configMapGenerator:
 - name: egress-selector-config
   files: [egress-selector-config.yaml]
-  namespace: play-cluster
+  namespace: playkube
 - name: kubeadm-config
   files: [kubeadm-config.yaml]
-  namespace: play-cluster
+  namespace: playkube
 - name: kubeconfig-template
   files: [kubeconfig=kubeconfig-template]
-  namespace: play-cluster
+  namespace: playkube
 resources:
 - admin-shell.yaml
 - apiserver.yaml

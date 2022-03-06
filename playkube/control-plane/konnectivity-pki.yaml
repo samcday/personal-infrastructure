@@ -3,7 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: konnectivity-server-agent-ca
-  namespace: play-cluster
+  namespace: playkube
 spec:
   isCA: true
   commonName: konnectivity-server-agent-ca
@@ -20,7 +20,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: konnectivity-server-agent-ca-issuer
-  namespace: play-cluster
+  namespace: playkube
 spec:
   ca:
     secretName: konnectivity-server-agent-ca-cert
@@ -29,14 +29,14 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: konnectivity-server-agent
-  namespace: play-cluster
+  namespace: playkube
 spec:
   secretName: konnectivity-server-agent-cert
   privateKey:
     algorithm: ECDSA
     size: 256
   usages: [server auth]
-  dnsNames: [konnectivity.play-cluster.samcday.com]
+  dnsNames: [konnectivity.playkube.samcday.com]
   issuerRef:
     name: konnectivity-server-agent-ca-issuer
     kind: Issuer
@@ -46,7 +46,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: konnectivity-agent
-  namespace: play-cluster
+  namespace: playkube
 spec:
   secretName: konnectivity-agent-cert
   privateKey:
@@ -64,7 +64,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: konnectivity-server-apiserver-ca
-  namespace: play-cluster
+  namespace: playkube
 spec:
   isCA: true
   commonName: konnectivity-server-apiserver-ca
@@ -81,7 +81,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: konnectivity-server-apiserver-ca-issuer
-  namespace: play-cluster
+  namespace: playkube
 spec:
   ca:
     secretName: konnectivity-server-apiserver-ca-cert
@@ -90,7 +90,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: konnectivity-server-apiserver
-  namespace: play-cluster
+  namespace: playkube
 spec:
   secretName: konnectivity-server-apiserver-cert
   privateKey:
@@ -107,7 +107,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: apiserver-konnectivity
-  namespace: play-cluster
+  namespace: playkube
 spec:
   secretName: apiserver-konnectivity-cert
   privateKey:

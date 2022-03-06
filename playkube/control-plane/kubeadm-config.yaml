@@ -1,6 +1,6 @@
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
-clusterName: play-cluster
+clusterName: playkube
 imageRepository: k8s.gcr.io
 kubernetesVersion: 1.21.8
 networking:

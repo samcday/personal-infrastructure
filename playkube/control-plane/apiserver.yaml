@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: apiserver
-  namespace: play-cluster
+  namespace: playkube
 spec:
   secretName: apiserver-cert
   privateKey:
@@ -10,9 +10,9 @@ spec:
     size: 256
   usages: [server auth]
   dnsNames:
-  - apiserver.play-cluster.svc.cluster.local
+  - apiserver.playkube.svc.cluster.local
   - apiserver
-  - apiserver.play-cluster.samcday.com
+  - apiserver.playkube.samcday.com
   ipAddresses:
   - 49.12.17.240
   - 10.0.0.1
@@ -27,7 +27,7 @@ metadata:
   labels:
     app: apiserver
   name: apiserver
-  namespace: play-cluster
+  namespace: playkube
 spec:
   replicas: 2
   selector:
@@ -53,14 +53,14 @@ spec:
         - --etcd-certfile=/opt/certs/etcd-client/tls.crt
         - --etcd-compaction-interval=0
         - --etcd-keyfile=/opt/certs/etcd-client/tls.key
-        - --etcd-prefix=/play-cluster
+        - --etcd-prefix=/playkube
         - --etcd-servers=https://etcd.etcd.svc.cluster.local:2379
         - --proxy-client-cert-file=/opt/certs/front-proxy-client/tls.crt
         - --proxy-client-key-file=/opt/certs/front-proxy-client/tls.key
         - --requestheader-allowed-names=front-proxy-client
         - --requestheader-client-ca-file=/opt/certs/front-proxy-client/ca.crt
         - --secure-port=6444
-        - --service-account-issuer=https://apiserver.play-cluster.svc.cluster.local
+        - --service-account-issuer=https://apiserver.playkube.svc.cluster.local
         - --service-account-key-file=/opt/sa/pub
         - --service-account-signing-key-file=/opt/sa/key
         - --tls-cert-file=/opt/certs/apiserver/tls.crt
@@ -104,9 +104,9 @@ metadata:
   labels:
     app: apiserver
   name: apiserver
-  namespace: play-cluster
+  namespace: playkube
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: apiserver.play-cluster.samcday.com
+    external-dns.alpha.kubernetes.io/hostname: apiserver.playkube.samcday.com
 spec:
   type: NodePort
   externalIPs: [49.12.17.240]

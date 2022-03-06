@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: kubeadm-init
-  namespace: play-cluster
+  namespace: playkube
 spec:
   template:
     spec:

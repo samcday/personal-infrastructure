@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: controller-manager
-  namespace: play-cluster
+  namespace: playkube
 spec:
   secretName: controller-manager-cert
   privateKey:
@@ -21,7 +21,7 @@ metadata:
   labels:
     app: controller-manager
   name: controller-manager
-  namespace: play-cluster
+  namespace: playkube
 spec:
   replicas: 2
   selector:
@@ -41,7 +41,7 @@ spec:
         - --authentication-kubeconfig=/opt/kubeconfig/kubeconfig
         - --authorization-kubeconfig=/opt/kubeconfig/kubeconfig
         - --cluster-cidr=10.80.0.0/12
-        - --cluster-name=play-cluster
+        - --cluster-name=playkube
         - --cluster-signing-cert-file=/opt/ca-cert/tls.crt
         - --cluster-signing-key-file=/opt/ca-cert/tls.key
         - --controllers=*,bootstrapsigner,tokencleaner
