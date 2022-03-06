@@ -20,6 +20,5 @@ resources:
 - konnectivity-pki.yaml
 - konnectivity-server.yaml
 - kubeadm-init.yaml
-- namespace.yaml
 - pki.yaml
 - scheduler.yaml
