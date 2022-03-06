@@ -5,7 +5,7 @@ metadata:
   namespace: miniflux
 spec:
   endpoints:
-  - targetPort: http
+  - targetPort: 8080
   jobLabel: miniflux
   selector:
     matchLabels:

@@ -12,6 +12,7 @@ env:
   BASE_URL: https://miniflux.samcday.com
   CREATE_ADMIN: "1"
   INVIDIOUS_INSTANCE: invidious.samcday.com
+  METRICS_ALLOWED_NETWORKS: 0.0.0.0/0
   METRICS_COLLECTOR: "1"
   RUN_MIGRATIONS: "1"
 envValueFrom:
