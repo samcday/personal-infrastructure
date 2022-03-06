@@ -1,0 +1,28 @@
+# https://github.com/morremeyer/charts/blob/main/charts/generic/values.yaml
+
+env:
+image:
+  repository: spikecodes/libreddit
+  tag: latest
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+  className: nginx
+  hosts:
+  - host: libreddit.samcday.com
+    paths:
+    - path: /
+  tls:
+  - hosts:
+    - libreddit.samcday.com
+    secretName: certificate
+livenessProbe:
+  httpGet:
+    path: /settings
+ports:
+- name: http
+  containerPort: 8080
+readinessProbe: ~
+replicaCount: 2

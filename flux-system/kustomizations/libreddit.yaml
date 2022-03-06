@@ -2,11 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: invidious
+  name: libreddit
   namespace: flux-system
 spec:
   interval: 1h
-  path: ./invidious
+  path: ./libreddit
   prune: true
   sourceRef:
     kind: GitRepository

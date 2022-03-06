@@ -5,7 +5,7 @@ metadata:
   name: nitter
   namespace: flux-system
 spec:
-  interval: 15m0s
+  interval: 1h
   path: ./nitter
   prune: true
   sourceRef:

@@ -5,7 +5,7 @@ metadata:
   name: flux-system-extra
   namespace: flux-system
 spec:
-  interval: 15m0s
+  interval: 1h
   path: ./flux-system/extra
   prune: true
   sourceRef:

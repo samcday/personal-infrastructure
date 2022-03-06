@@ -47,9 +47,8 @@ ingress:
 livenessProbe:
   httpGet:
     path: /POTUS
-    port: 8080
+ports:
+- name: http
+  containerPort: 8080
 readinessProbe: ~
 replicaCount: 2
-service:
-  name: nitter
-  targetPort: 8080
