@@ -8,10 +8,11 @@ configMapGenerator:
   files: [promtail/values.yaml]
 resources:
 - ../kustomizeconfig/
+- loki/
+
 - kube-prometheus-stack/helm-release.yaml
 - kube-prometheus-stack/secrets.yaml
 - kube-prometheus-stack/vpa.yaml
 - limit-range.yaml
-- loki/
 - namespace.yaml
 - promtail/helm-release.yaml
