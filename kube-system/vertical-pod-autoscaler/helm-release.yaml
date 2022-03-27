@@ -12,7 +12,7 @@ spec:
         kind: HelmRepository
         name: cowboysysop
         namespace: flux-system
-      version: 4.0.4
+      version: 4.1.0
   interval: 1h
   releaseName: vertical-pod-autoscaler
   valuesFrom:
