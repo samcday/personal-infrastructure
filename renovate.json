@@ -3,6 +3,6 @@
     "config:base"
   ],
   "flux": {
-    "fileMatch": [".*helm-release\\.yaml", ".*helm-repo.*\\.yaml"]
+    "fileMatch": [".*helm-release\\.yaml", "flux-system/helmrepos/.*\\.yaml", ".*helm-repo.*\\.yaml"]
   }
 }
