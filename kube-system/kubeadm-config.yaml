@@ -1,6 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 apiServer:
+  certSANs: [127.0.0.1]
   extraArgs:
     authorization-mode: Node,RBAC
     audit-policy-file: /etc/kubernetes/audit-policy.yaml
