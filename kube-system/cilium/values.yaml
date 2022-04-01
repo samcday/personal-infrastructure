@@ -7,7 +7,7 @@ hubble:
 ipam:
   mode: kubernetes
 ipv4NativeRoutingCIDR: 10.98.0.0/15
-k8sServiceHost: kube.samcday.com
+k8sServiceHost: 10.96.0.3
 k8sServicePort: 6443
 kubeProxyReplacement: strict
 operator:
