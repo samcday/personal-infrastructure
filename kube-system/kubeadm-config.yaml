@@ -27,7 +27,6 @@ clusterName: personal
 controllerManager:
   extraArgs:
     bind-address: 0.0.0.0
-controlPlaneEndpoint: 10.96.0.3:6443
 dns:
   type: CoreDNS
 etcd:
