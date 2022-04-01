@@ -1,4 +1,12 @@
+# https://github.com/samcday/hcloud-fip-k8s/blob/main/chart/values.yaml
+
 floatingIP:
   selector: role=vip
   label: node-role.kubernetes.io/vip
   setupAnnotation: samcday.com/vip
+
+tolerations:
+- key: node-role.kubernetes.io/control-plane
+  operator: Exists
+- key: node-role.kubernetes.io/master
+  operator: Exists
