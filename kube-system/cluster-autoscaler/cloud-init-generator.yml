@@ -9,7 +9,6 @@ spec:
       name: cloud-init-generator
     spec:
       template:
-        metadata:
         spec:
           tolerations:
             - effect: NoSchedule

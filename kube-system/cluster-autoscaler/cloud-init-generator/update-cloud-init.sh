@@ -12,7 +12,6 @@ set -uexo pipefail
 
 # discovery token and HCLOUD_TOKEN were stuffed into the cluster by bootstrap.sh
 discovery_token_hash=$(kubectl -n kube-system get secret/discovery-token-hash -o json | jq -r .data.hash | base64 -d)
-HCLOUD_TOKEN=$(kubectl -n kube-system get secret/hcloud -o json | jq -r .data.HCLOUD_TOKEN | base64 -d)
 
 # The control-plane endpoint (load balancer) and kube version are set in the kubeadm configmap which, annoyingly, is in YAML. Hence this yq nonsense.
 cp_endpoint=$(kubectl -n kube-system get cm/kubeadm-config -o json | jq -r .data.ClusterConfiguration | yq e '.controlPlaneEndpoint' -)
@@ -30,12 +29,11 @@ token=$(KUBECONFIG=kubeconfig kubeadm token create --ttl 48h)
 #!/bin/bash
 set -ueo pipefail
 export DEBIAN_FRONTEND=noninteractive
-export HCLOUD_TOKEN="$HCLOUD_TOKEN"
 
 apt-get update
-apt-get install -y ca-certificates curl gnupg lsb-release apt-transport-https hcloud-cli jq
+apt-get install -y ca-certificates curl gnupg lsb-release apt-transport-https jq
 
-private_ip=\$(hcloud server describe "\$(hostname)" -o json | jq -r '.private_net[0].ip')
+private_ip=\$(curl http://169.254.169.254/hetzner/v1/metadata/private-networks | grep "ip: " | awk '{print $3}')
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
