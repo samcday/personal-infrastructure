@@ -33,7 +33,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y ca-certificates curl gnupg lsb-release apt-transport-https jq
 
-private_ip=\$(curl http://169.254.169.254/hetzner/v1/metadata/private-networks | grep "ip: " | awk '{print $3}')
+private_ip=\$(curl http://169.254.169.254/hetzner/v1/metadata/private-networks | grep "ip: " | awk '{print \$3}')
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
