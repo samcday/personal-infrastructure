@@ -1,7 +1,7 @@
 #!/bin/bash
 set -uexo pipefail
 
-tag=$(sha256sum Dockerfile | cut -d' ' -f1)
+tag=$(cat Dockerfile update-cloud-init.sh | sha256sum | cut -d' ' -f1)
 image=samcday/cloud-init-generator:$tag
 
 docker build -t "$image" .

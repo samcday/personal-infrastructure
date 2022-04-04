@@ -14,7 +14,7 @@ spec:
             - effect: NoSchedule
               key: node-role.kubernetes.io/master
           containers:
-          - image: samcday/cloud-init-generator:c585d22839fcec1c6846ac341ced1a231ac4912ac0c03c9c46bc2f6e477a9b36
+          - image: samcday/cloud-init-generator:5010463654d7eacf69470855014ae108719407191abff19735c452eb824f9966
             name: cloud-init-generator
             command: ["/bin/ash", "/script/update-cloud-init.sh"]
             volumeMounts:
