@@ -19,7 +19,7 @@ spec:
     spec:
       enableServiceLinks: false
       containers:
-      - image: quay.io/invidious/invidious:fc2b9031d4850e7ed8eb24e388aeae38b4eb2762
+      - image: quay.io/invidious/invidious:6c73614a47a5a88df45aa32fadb64e85595d2a18
         name: invidious
         env:
         - name: INVIDIOUS_CONFIG_FILE
