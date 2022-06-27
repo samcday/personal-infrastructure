@@ -11,7 +11,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: fluxcd-community
-      version: 0.15.0
+      version: 0.20.0
   install:
     disableWait: true
   interval: 1h
