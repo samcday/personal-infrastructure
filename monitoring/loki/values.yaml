@@ -1,5 +1,0 @@
-persistence:
-  enabled: true
-  storageClassName: hcloud-volumes
-serviceMonitor:
-  enabled: true

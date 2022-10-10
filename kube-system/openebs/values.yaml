@@ -1,5 +1,0 @@
-# https://github.com/openebs/charts/blob/main/charts/openebs/values.yaml
-ndm:
-  enabled: false
-ndmOperator:
-  enabled: false

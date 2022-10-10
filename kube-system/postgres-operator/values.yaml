@@ -1,6 +1,0 @@
-configKubernetes:
-  enable_pod_antiaffinity: true
-  pod_environment_secret: postgres-pod-secrets
-configAwsOrGcp:
-  aws_region: eu-central-003
-  wal_s3_bucket: samcday-postgres
