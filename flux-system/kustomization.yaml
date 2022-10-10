@@ -25,7 +25,6 @@ resources:
 - helmrepos/zalando-postgres-operator.yaml
 - kustomizations/flux-system.yaml
 - kustomizations/flux-system-extra.yaml
-- kustomizations/invidious.yaml
 - kustomizations/kube-system.yaml
 - kustomizations/monitoring.yaml
 - kustomizations/playkube.yaml
