@@ -27,7 +27,6 @@ resources:
 - kustomizations/flux-system-extra.yaml
 - kustomizations/invidious.yaml
 - kustomizations/kube-system.yaml
-- kustomizations/libreddit.yaml
 - kustomizations/monitoring.yaml
 - kustomizations/miniflux.yaml
 - kustomizations/nitter.yaml
