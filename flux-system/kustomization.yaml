@@ -28,7 +28,6 @@ resources:
 - kustomizations/invidious.yaml
 - kustomizations/kube-system.yaml
 - kustomizations/monitoring.yaml
-- kustomizations/miniflux.yaml
 - kustomizations/playkube.yaml
 - kustomizations/synapse.yaml
 - limit-range.yaml
